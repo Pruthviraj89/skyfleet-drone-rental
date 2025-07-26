@@ -1,0 +1,48 @@
+# SkyFleet Rentals Project Configuration
+project_context:
+  name: "SkyFleet Rentals"
+  description: "A production-level web application for renting drones, featuring user management, drone listings with images, bookings, and an admin panel. The backend is a Spring Boot application with REST APIs (e.g., /api/drones, /api/bookings)."
+  tech_stack: ["React", "Bootstrap", "FontAwesome", "JavaScript", "React Router"]
+  goals: ["Responsive design", "Professional UI with images", "API integration", "Production readiness"]
+
+coding_conventions:
+  use_functional_components: true
+  prefer_hooks: ["useState", "useEffect", "useContext"]
+  css_framework: "Bootstrap"
+  icon_library: "FontAwesome"
+  naming_convention:
+    components: "PascalCase"
+    files: "kebab-case"
+    assets: "kebab-case"
+  comments: "Add descriptive comments for complex logic and API calls"
+  optimization: "Minimize re-renders, lazy load images"
+
+api_integration:
+  base_url: "http://localhost:8080"
+  endpoints:
+    drones: "/api/drones"
+    bookings: "/api/bookings"
+    users: "/api/users"
+  method: "fetch"
+  error_handling: "Display user-friendly error messages with toast notifications"
+
+assets:
+  image_sources: "src/assets/images/"
+  image_format: ["png", "jpg"]
+  placeholder_image: "https://via.placeholder.com/300x200"
+
+validation:
+  input_validation: "Use HTML5 attributes and React state with formik for complex forms"
+  prop_types: false
+
+state_management:
+  prefer: "useContext with useReducer for global state (e.g., user auth, cart)"
+
+deployment:
+  preferred_platform: "Vercel"
+  build_command: "npm run build"
+  environment_variables: ["REACT_APP_API_URL=http://your-production-api-url"]
+
+performance:
+  lazy_loading: "Use React.lazy and Suspense for components"
+  image_optimization: "Use next/image or lazy loading for images"

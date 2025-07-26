@@ -1,0 +1,75 @@
+package com.skyfleet.rentals.service;
+
+import com.skyfleet.rentals.custom_exceptions.ApiException;
+import com.skyfleet.rentals.dto.AddUserDTO;
+import com.skyfleet.rentals.dto.UserLoginDTO;
+import com.skyfleet.rentals.dto.UserResponseDTO;
+import com.skyfleet.rentals.entity.Role;
+import com.skyfleet.rentals.entity.User;
+import com.skyfleet.rentals.repository.UserRepository;
+
+import jakarta.transaction.Transactional;
+
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+@Service
+@Transactional
+public class UserServiceImpl implements UserService {
+
+    @Autowired
+    private UserRepository userRepository;
+    
+    @Autowired
+    private ModelMapper modelMapper;
+    
+
+    @Override
+    public UserResponseDTO saveUser(AddUserDTO user) {
+       if(userRepository.existsByEmail(user.getEmail()))
+    	   throw new ApiException("User Already Exists....!!!!");
+       User entity= modelMapper.map(user, User.class);
+       
+       entity.setRole(Role.USER);
+        
+        User persistEntity=userRepository.save(entity);
+        
+        return modelMapper.map(persistEntity, UserResponseDTO.class);
+    }
+
+    @Override
+    public List<UserResponseDTO> getAllUsers() {	
+    	return userRepository.findAll().stream().map(entity-> modelMapper.map(entity, UserResponseDTO.class)).toList();
+    }
+
+    @Override
+    public UserResponseDTO getUserById(Long id) {
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new ApiException("User Not Exists"));
+
+        return modelMapper.map(user, UserResponseDTO.class);
+    }
+
+    @Override
+    public void deleteUser(Long id) {
+    	if(!userRepository.findById(id).isPresent())
+    		throw new ApiException("User Not Exists");
+    	else
+    		userRepository.deleteById(id);
+       
+    }
+
+	@Override
+	public UserResponseDTO getUserByEmail(UserLoginDTO user) {
+		// TODO Auto-generated method stub
+		User Entity= userRepository.findByEmail(user.getEmail());
+		
+		if(Entity!=null)
+			return modelMapper.map(Entity, UserResponseDTO.class);
+		else
+			throw new ApiException("User Not Found");
+	}
+}

@@ -1,0 +1,112 @@
+
+---
+
+### 📊 Tables and Their Fields
+
+#### 1. **User**
+Represents a user who can rent drones.
+
+- `id` (Long, PK)
+- `name` (String)
+- `email` (String, Unique)
+- `password` (String)
+- `phone` (String)
+- `address` (String)
+- `role` (String) - values can be "admin", "user"
+- `bookings` (List<Booking>) – one-to-many relationship with bookings
+
+---
+
+#### 2. **Drone**
+Details of each drone available for rental.
+
+- `id` (Long, PK)
+- `model` (String)
+- `brand` (String)
+- `status` (String) – e.g., "available", "booked", "maintenance"
+- `pricePerHour` (Double)
+- `batteryLife` (Integer) – in minutes
+- `location` (String)
+- `imageUrl` (String) – image link for UI
+- `guideUrl` (String) – user manual or guide link
+- `bookings` (List<Booking>) – one-to-many relationship
+
+---
+
+#### 3. **Booking**
+Each rental order placed by a user.
+
+- `id` (Long, PK)
+- `user` (User) – many-to-one
+- `drone` (Drone) – many-to-one
+- `startTime` (LocalDateTime)
+- `endTime` (LocalDateTime)
+- `totalAmount` (Double)
+- `status` (String) – e.g., "confirmed", "in-progress", "completed", "cancelled"
+- `payments` (List<Payment>)
+- `penalties` (List<Penalty>)
+- `undertakings` (List<Undertaking>)
+- `ratings` (List<Rating>)
+
+---
+
+#### 4. **Payment**
+Payment details for a booking.
+
+- `id` (Long, PK)
+- `booking` (Booking) – many-to-one
+- `amountPaid` (Double)
+- `paymentMethod` (String) – e.g., "UPI", "Card", "Cash"
+- `paymentDate` (LocalDateTime)
+- `paymentStatus` (String) – e.g., "paid", "pending"
+
+---
+
+#### 5. **Penalty**
+Penalties added in case of late return or damage.
+
+- `id` (Long, PK)
+- `booking` (Booking) – many-to-one
+- `penaltyReason` (String)
+- `penaltyAmount` (Double)
+- `penaltyStatus` (String) – e.g., "paid", "unpaid"
+
+---
+
+#### 6. **Undertaking**
+Pre-booking agreement signed by user.
+
+- `id` (Long, PK)
+- `booking` (Booking) – many-to-one
+- `isAccepted` (Boolean)
+- `depositAmount` (Double)
+- `damageClauseText` (String) – legal info or clause
+
+---
+
+#### 7. **Rating**
+User’s rating and comment for a drone and booking.
+
+- `id` (Long, PK)
+- `booking` (Booking) – many-to-one
+- `user` (User) – many-to-one
+- `drone` (Drone) – many-to-one
+- `rating` (Integer) – scale of 1 to 5
+- `comment` (String)
+
+---
+
+🧠 Relationships Summary:
+- A **User** can have many **Bookings**
+- A **Drone** can have many **Bookings**
+- A **Booking** can have multiple **Payments**, **Penalties**, **Undertakings**, and **Ratings**
+- **Ratings** are linked to both **User**, **Drone**, and **Booking**
+
+---
+
+Please generate:
+- Frontend UI forms with validation
+- List views and detail pages for each entity
+- CRUD operations (create, read, update, delete) for all major entities
+- Relationship-aware UI (e.g., show user’s bookings, drone ratings, etc.)
+
