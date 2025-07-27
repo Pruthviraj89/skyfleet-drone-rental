@@ -25,7 +25,7 @@ public class Penalty extends BaseEntity{
     private Booking booking;
 
     @Column(name = "penalty_reason", nullable = false)
-    private String penaltyReason;
+    private PenaltyReasonStatus penaltyReason;
 
     @Column(name = "penalty_amount", nullable = false)
     private Double penaltyAmount;

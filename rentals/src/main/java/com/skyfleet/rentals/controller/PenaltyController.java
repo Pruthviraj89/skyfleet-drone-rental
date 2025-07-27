@@ -1,5 +1,7 @@
 package com.skyfleet.rentals.controller;
 
+import com.skyfleet.rentals.dto.PenaltyRequestDTO;
+import com.skyfleet.rentals.dto.PenaltyResponseDTO;
 import com.skyfleet.rentals.entity.Penalty;
 import com.skyfleet.rentals.service.PenaltyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,19 +18,20 @@ public class PenaltyController {
     private PenaltyService penaltyService;
 
     @PostMapping
-    public ResponseEntity<Penalty> createPenalty(@RequestBody Penalty penalty) {
+    public ResponseEntity<PenaltyResponseDTO> createPenalty(@RequestBody PenaltyRequestDTO penalty) {
         return ResponseEntity.ok(penaltyService.savePenalty(penalty));
     }
 
     @GetMapping
-    public ResponseEntity<List<Penalty>> getAllPenalties() {
+    public ResponseEntity<List<PenaltyResponseDTO>> getAllPenalties() {
         return ResponseEntity.ok(penaltyService.getAllPenalties());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Penalty> getPenaltyById(@PathVariable Long id) {
-        Penalty penalty = penaltyService.getPenaltyById(id);
-        return penalty != null ? ResponseEntity.ok(penalty) : ResponseEntity.notFound().build();
+    public ResponseEntity<PenaltyResponseDTO> getPenaltyById(@PathVariable Long id) {
+    	
+    	return ResponseEntity.ok(penaltyService.getPenaltyById(id));
+      
     }
 
     @DeleteMapping("/{id}")
