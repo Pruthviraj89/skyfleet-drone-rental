@@ -9,6 +9,8 @@ import lombok.ToString;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -30,13 +32,25 @@ public class Payment extends BaseEntity{
     @Column(name = "amount_paid", nullable = false)
     private Double amountPaid;
 
-    @Column(name = "payment_method", nullable = false)
+    @Column(name = "payment_method")
     private String paymentMethod;
 
+    @CreationTimestamp
     @Column(name = "payment_date", nullable = false)
     private LocalDateTime paymentDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_status", nullable = false)
     private PaymentStatus paymentStatus; // Enum for payment status
+    
+    
+    @Column(name="razor_payment_id")
+    private String razorpayPaymentId;
+    
+    @Column(name="razor_order_id")
+    private String razorpayOrderId;
+    
+    
+    @Column(name = "razor_signature")
+    private String razorpaySignature;
 }

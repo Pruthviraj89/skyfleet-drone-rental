@@ -1,5 +1,7 @@
 package com.skyfleet.rentals.controller;
 
+import com.skyfleet.rentals.dto.PaymentRequestDTO;
+import com.skyfleet.rentals.dto.PaymentResponseDTO;
 import com.skyfleet.rentals.entity.Payment;
 import com.skyfleet.rentals.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,21 +16,23 @@ public class PaymentController {
 
     @Autowired
     private PaymentService paymentService;
+    
+   
 
     @PostMapping
-    public ResponseEntity<Payment> createPayment(@RequestBody Payment payment) {
+    public ResponseEntity<PaymentResponseDTO> createPayment(@RequestBody PaymentRequestDTO payment) {
         return ResponseEntity.ok(paymentService.savePayment(payment));
     }
 
     @GetMapping
-    public ResponseEntity<List<Payment>> getAllPayments() {
+    public ResponseEntity<List<PaymentResponseDTO>> getAllPayments() {
         return ResponseEntity.ok(paymentService.getAllPayments());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Payment> getPaymentById(@PathVariable Long id) {
-        Payment payment = paymentService.getPaymentById(id);
-        return payment != null ? ResponseEntity.ok(payment) : ResponseEntity.notFound().build();
+    public ResponseEntity<PaymentResponseDTO> getPaymentById(@PathVariable Long id) {
+      
+        return ResponseEntity.ok(paymentService.getPaymentById(id));
     }
 
     @DeleteMapping("/{id}")
