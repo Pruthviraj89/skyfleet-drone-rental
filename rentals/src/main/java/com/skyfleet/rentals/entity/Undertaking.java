@@ -3,11 +3,12 @@ package com.skyfleet.rentals.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "undertakings")
@@ -29,7 +30,7 @@ public class Undertaking  extends BaseEntity{
     private Boolean isAccepted=false;
 
     @Column(name = "deposit_amount", nullable = false)
-    private Double depositAmount;
+    private BigDecimal depositAmount;
 
     @Column(name = "damage_clause_text", nullable = false)
     private String damageClauseText;

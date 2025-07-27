@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -110,7 +111,7 @@ public class PenaltyServiceImpl implements PenaltyService {
             throw new ApiException("Booking, Drone, EndTime, or PenaltyReason is null");
         }
 
-        double penaltyAmount = 0.0;
+        BigDecimal penaltyAmount = BigDecimal.valueOf(0.0);
 
         switch (penaltyReason) {
             case LATE_RETURN:
@@ -118,25 +119,26 @@ public class PenaltyServiceImpl implements PenaltyService {
                     Duration delay = Duration.between(endTime, currentTime);
                     long hoursDelayed = (long) Math.ceil((double) delay.toMinutes() / 60);
                     if (hoursDelayed > 0) {
-                        penaltyAmount = hoursDelayed * drone.getPricePerHour() * LATE_FEE_RATE;
+                        penaltyAmount = BigDecimal.valueOf(hoursDelayed * drone.getPricePerHour().doubleValue() * LATE_FEE_RATE);
                     }
                 }
                 break;
 
             case DAMAGE:
-                penaltyAmount = DAMAGE_FIXED_AMOUNT;
+                penaltyAmount = BigDecimal.valueOf(DAMAGE_FIXED_AMOUNT);
                 break;
 
             case CANCELLATION:
-                double totalAmount = booking.getTotalAmount();
-                penaltyAmount = totalAmount * CANCELLATION_FEE_RATE;
+                BigDecimal totalAmount = booking.getTotalAmount();
+                double temp =  totalAmount.doubleValue() * CANCELLATION_FEE_RATE;
+                penaltyAmount = BigDecimal.valueOf(temp);
                 break;
 
             default:
                 break;
         }
 
-        if (penaltyAmount > 0) {
+        if (penaltyAmount.intValue() > 0) {
             penalty.setPenaltyAmount(penaltyAmount);
             return penaltyRepository.save(penalty);
         } else {

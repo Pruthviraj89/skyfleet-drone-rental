@@ -5,6 +5,8 @@ package com.skyfleet.rentals.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 
 @Getter
 @Setter
@@ -17,7 +19,7 @@ public class UndertakingRequestDTO extends BaseDTO {
 	    private Boolean isAccepted;
 
 	    
-	    private Double depositAmount;
+	    private BigDecimal depositAmount;
 
 	    private String damageClauseText;
 }

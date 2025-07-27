@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -82,7 +83,7 @@ public class PaymentServiceImpl implements PaymentService {
         		
         		JSONObject 	orderRequest= new JSONObject();
         		
-        		orderRequest.put("amount", payment.getAmountPaid()*100);
+        		orderRequest.put("amount", payment.getAmountPaid().doubleValue()*100);
         		orderRequest.put("currency", "INR");
         		orderRequest.put("receipt", payment.getBookingId().toString());
         		
@@ -105,7 +106,7 @@ public class PaymentServiceImpl implements PaymentService {
         		
         		
         		entity.setBooking(booking);
-        		entity.setAmountPaid(payment.getAmountPaid());
+        		entity.setAmountPaid(BigDecimal.valueOf(payment.getAmountPaid().doubleValue()));
         		entity.setPaymentStatus(PaymentStatus.PENDING);
         		entity.setRazorpayPaymentId(razorpayOrder.getReceipt());
         		entity.setRazorpayOrderId(razorpayOrder.getId());

@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,6 +24,7 @@ public class Booking  extends BaseEntity{
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+    
 
     @ManyToOne
     @JoinColumn(name = "drone_id", nullable = false)
@@ -40,7 +43,7 @@ public class Booking  extends BaseEntity{
     private LocalDateTime endTime;
 
     @Column(name = "total_amount", nullable = false)
-    private Double totalAmount;
+    private BigDecimal totalAmount;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -32,7 +33,7 @@ public class Drone  extends BaseEntity{
     private DroneStatus status; // Enum for drone status
 
     @Column(name = "price_per_hour", nullable = false)
-    private Double pricePerHour;
+    private BigDecimal pricePerHour;
 
     @Column(name = "battery_life", nullable = false)
     private Integer batteryLife;

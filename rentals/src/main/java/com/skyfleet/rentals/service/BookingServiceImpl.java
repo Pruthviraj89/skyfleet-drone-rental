@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -135,7 +136,8 @@ public class BookingServiceImpl implements BookingService {
     public void calculateTotalAmount(Booking booking) {
         Drone drone = booking.getDrone();
         Duration duration = Duration.between(booking.getStartTime(), booking.getEndTime());
-        double total= Math.ceil((duration.toMinutes()/60.0) * drone.getPricePerHour());
+
+        BigDecimal total= BigDecimal.valueOf( Math.ceil(duration.toMinutes()/60.0)*drone.getPricePerHour().doubleValue() );
         booking.setTotalAmount(total);
         
     }

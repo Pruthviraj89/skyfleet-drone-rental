@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "penalties")
 @Getter
@@ -24,11 +26,13 @@ public class Penalty extends BaseEntity{
     @JsonIgnore
     private Booking booking;
 
+    
+    @Enumerated(EnumType.STRING)
     @Column(name = "penalty_reason", nullable = false)
     private PenaltyReasonStatus penaltyReason;
 
     @Column(name = "penalty_amount", nullable = false)
-    private Double penaltyAmount;
+    private BigDecimal penaltyAmount;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "penalty_status", nullable = false)

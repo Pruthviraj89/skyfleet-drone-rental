@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -30,7 +31,7 @@ public class Payment extends BaseEntity{
     private Booking booking;
 
     @Column(name = "amount_paid", nullable = false)
-    private Double amountPaid;
+    private BigDecimal amountPaid;
 
     @Column(name = "payment_method")
     private String paymentMethod;

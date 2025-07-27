@@ -1,13 +1,12 @@
 package com.skyfleet.rentals.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 
 
 import com.skyfleet.rentals.entity.BookingStatus;
 import com.skyfleet.rentals.entity.DeliveryStatus;
-import com.skyfleet.rentals.entity.Drone;
-import com.skyfleet.rentals.entity.User;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -39,7 +38,7 @@ public class BookingResponseDTO extends BaseDTO {
 	    private LocalDateTime endTime;
 
 
-	    private Double totalAmount;
+	    private BigDecimal totalAmount;
 
 	   
 	    private BookingStatus status; // Enum for booking status
