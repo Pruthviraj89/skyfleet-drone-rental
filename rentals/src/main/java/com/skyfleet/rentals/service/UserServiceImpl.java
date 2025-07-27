@@ -1,6 +1,7 @@
 package com.skyfleet.rentals.service;
 
 import com.skyfleet.rentals.custom_exceptions.ApiException;
+
 import com.skyfleet.rentals.dto.AddUserDTO;
 import com.skyfleet.rentals.dto.UserLoginDTO;
 import com.skyfleet.rentals.dto.UserResponseDTO;
@@ -8,12 +9,14 @@ import com.skyfleet.rentals.entity.Role;
 import com.skyfleet.rentals.entity.User;
 import com.skyfleet.rentals.repository.UserRepository;
 
-import jakarta.transaction.Transactional;
+
 
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Service

@@ -21,12 +21,12 @@ public class Undertaking  extends BaseEntity{
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "booking_id", nullable = false)
+    @JoinColumn(name = "booking_id")
     @JsonIgnore
     private Booking booking;
 
     @Column(name = "is_accepted", nullable = false)
-    private Boolean isAccepted;
+    private Boolean isAccepted=false;
 
     @Column(name = "deposit_amount", nullable = false)
     private Double depositAmount;

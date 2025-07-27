@@ -1,8 +1,13 @@
 package com.skyfleet.rentals.controller;
 
-import com.skyfleet.rentals.entity.Drone;
+import com.skyfleet.rentals.dto.DroneRequestDTO;
+import com.skyfleet.rentals.dto.DroneResponseDTO;
+
 import com.skyfleet.rentals.service.DroneService;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import lombok.AllArgsConstructor;
+
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,25 +15,24 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/drones")
+@AllArgsConstructor
 public class DroneController {
 
-    @Autowired
     private DroneService droneService;
 
     @PostMapping
-    public ResponseEntity<Drone> createDrone(@RequestBody Drone drone) {
+    public ResponseEntity<DroneResponseDTO> createDrone(@RequestBody DroneRequestDTO drone) {
         return ResponseEntity.ok(droneService.saveDrone(drone));
     }
 
     @GetMapping
-    public ResponseEntity<List<Drone>> getAllDrones() {
+    public ResponseEntity<List<DroneResponseDTO>> getAllDrones() {
         return ResponseEntity.ok(droneService.getAllDrones());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Drone> getDroneById(@PathVariable Long id) {
-        Drone drone = droneService.getDroneById(id);
-        return drone != null ? ResponseEntity.ok(drone) : ResponseEntity.notFound().build();
+    public ResponseEntity<DroneResponseDTO> getDroneById(@PathVariable Long id) {
+    	return ResponseEntity.ok(droneService.getDroneById(id));
     }
 
     @DeleteMapping("/{id}")

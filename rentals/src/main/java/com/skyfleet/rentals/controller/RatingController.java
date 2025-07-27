@@ -1,5 +1,7 @@
 package com.skyfleet.rentals.controller;
 
+import com.skyfleet.rentals.dto.RatingRequestDTO;
+import com.skyfleet.rentals.dto.RatingResponseDTO;
 import com.skyfleet.rentals.entity.Rating;
 import com.skyfleet.rentals.service.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,19 +18,20 @@ public class RatingController {
     private RatingService ratingService;
 
     @PostMapping
-    public ResponseEntity<Rating> createRating(@RequestBody Rating rating) {
+    public ResponseEntity<RatingResponseDTO> createRating(@RequestBody RatingRequestDTO rating) {
         return ResponseEntity.ok(ratingService.saveRating(rating));
     }
 
     @GetMapping
-    public ResponseEntity<List<Rating>> getAllRatings() {
+    public ResponseEntity<List<RatingResponseDTO>> getAllRatings() {
         return ResponseEntity.ok(ratingService.getAllRatings());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Rating> getRatingById(@PathVariable Long id) {
-        Rating rating = ratingService.getRatingById(id);
-        return rating != null ? ResponseEntity.ok(rating) : ResponseEntity.notFound().build();
+    public ResponseEntity<?> getRatingById(@PathVariable Long id) {
+       
+    	
+    	return ResponseEntity.ok(ratingService.getRatingById(id));
     }
 
     @DeleteMapping("/{id}")
