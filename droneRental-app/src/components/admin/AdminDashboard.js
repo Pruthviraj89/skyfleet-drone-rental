@@ -3,6 +3,10 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { adminAPI, userAPI, droneAPI, bookingAPI } from '../../services/api';
 import { toast } from 'react-toastify';
+import UserModal from './UserModal';
+import DroneModal from './DroneModal';
+import BookingModal from './BookingModal';
+import PenaltyRatingRevenueTabs from './PenaltyRatingRevenueTabs';
 
 const AdminDashboard = () => {
   const { user } = useAuth();
@@ -12,6 +16,18 @@ const AdminDashboard = () => {
   const [drones, setDrones] = useState([]);
   const [bookings, setBookings] = useState([]);
   const [activeTab, setActiveTab] = useState('overview');
+  const [showUserModal, setShowUserModal] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
+  const [userList, setUserList] = useState([]);
+  const [userLoading, setUserLoading] = useState(false);
+  const [showDroneModal, setShowDroneModal] = useState(false);
+  const [editingDrone, setEditingDrone] = useState(null);
+  const [droneList, setDroneList] = useState([]);
+  const [droneLoading, setDroneLoading] = useState(false);
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [bookingList, setBookingList] = useState([]);
+  const [bookingLoading, setBookingLoading] = useState(false);
 
   useEffect(() => {
     if (user?.role !== 'ADMIN') {
@@ -118,6 +134,151 @@ const AdminDashboard = () => {
       </span>
     );
   };
+
+  const fetchUsers = async () => {
+    setUserLoading(true);
+    try {
+      const res = await userAPI.getAll();
+      setUserList(res.data);
+    } catch (err) {
+      toast.error('Failed to fetch users');
+    } finally {
+      setUserLoading(false);
+    }
+  };
+
+  const handleAddUser = () => {
+    setEditingUser(null);
+    setShowUserModal(true);
+  };
+  const handleEditUser = (user) => {
+    setEditingUser(user);
+    setShowUserModal(true);
+  };
+  const handleDeleteUser = async (user) => {
+    if (window.confirm(`Delete user ${user.name}?`)) {
+      try {
+        await userAPI.delete(user.id);
+        toast.success('User deleted');
+        fetchUsers();
+      } catch (err) {
+        toast.error('Failed to delete user');
+      }
+    }
+  };
+  const handleSaveUser = async (form) => {
+    try {
+      if (editingUser) {
+        // Edit
+        await userAPI.updateProfile({ ...editingUser, ...form });
+        toast.success('User updated');
+      } else {
+        // Add
+        await userAPI.create(form);
+        toast.success('User added');
+      }
+      fetchUsers();
+    } catch (err) {
+      toast.error('Failed to save user');
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchDrones = async () => {
+    setDroneLoading(true);
+    try {
+      const res = await droneAPI.getAll();
+      setDroneList(res.data);
+    } catch (err) {
+      toast.error('Failed to fetch drones');
+    } finally {
+      setDroneLoading(false);
+    }
+  };
+
+  const handleAddDrone = () => {
+    setEditingDrone(null);
+    setShowDroneModal(true);
+  };
+  const handleEditDrone = (drone) => {
+    setEditingDrone(drone);
+    setShowDroneModal(true);
+  };
+  const handleDeleteDrone = async (drone) => {
+    if (window.confirm(`Delete drone ${drone.model}?`)) {
+      try {
+        await droneAPI.delete(drone.id);
+        toast.success('Drone deleted');
+        fetchDrones();
+      } catch (err) {
+        toast.error('Failed to delete drone');
+      }
+    }
+  };
+  const handleSaveDrone = async (form) => {
+    try {
+      if (editingDrone) {
+        // Edit
+        await droneAPI.update(editingDrone.id, form);
+        toast.success('Drone updated');
+      } else {
+        // Add
+        await droneAPI.create(form);
+        toast.success('Drone added');
+      }
+      fetchDrones();
+    } catch (err) {
+      toast.error('Failed to save drone');
+    }
+  };
+
+  useEffect(() => {
+    fetchDrones();
+  }, []);
+
+  const fetchBookings = async () => {
+    setBookingLoading(true);
+    try {
+      const res = await bookingAPI.getAllAdmin();
+      setBookingList(res.data);
+    } catch (err) {
+      toast.error('Failed to fetch bookings');
+    } finally {
+      setBookingLoading(false);
+    }
+  };
+
+  const handleViewBooking = (booking) => {
+    setSelectedBooking(booking);
+    setShowBookingModal(true);
+  };
+  const handleDeleteBooking = async (booking) => {
+    if (window.confirm(`Delete booking #${booking.id}?`)) {
+      try {
+        await bookingAPI.delete(booking.id);
+        toast.success('Booking deleted');
+        fetchBookings();
+      } catch (err) {
+        toast.error('Failed to delete booking');
+      }
+    }
+  };
+  const handleStatusChange = async (newStatus) => {
+    try {
+      await bookingAPI.update(selectedBooking.id, { ...selectedBooking, status: newStatus });
+      toast.success('Booking status updated');
+      fetchBookings();
+    } catch (err) {
+      toast.error('Failed to update status');
+    }
+  };
+
+  useEffect(() => {
+    fetchBookings();
+  }, []);
 
   if (loading) {
     return (
@@ -317,179 +478,163 @@ const AdminDashboard = () => {
 
           {/* Users Tab */}
           {activeTab === 'users' && (
-            <div className="card card-custom">
-              <div className="card-header d-flex justify-content-between align-items-center">
-                <h5 className="mb-0">
-                  <i className="fas fa-users me-2"></i>
-                  User Management
-                </h5>
-                <Link to="/admin/users/new" className="btn btn-primary-custom btn-sm">
-                  <i className="fas fa-plus me-1"></i>
-                  Add User
-                </Link>
+            <div className="tab-pane active">
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <h4>Users</h4>
+                <button className="btn btn-primary" onClick={handleAddUser}>
+                  <i className="fas fa-user-plus me-2"></i>Add User
+                </button>
               </div>
-              <div className="card-body">
-                <div className="table-responsive">
-                  <table className="table table-hover">
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Role</th>
-                        <th>Actions</th>
+              {userLoading ? (
+                <div>Loading...</div>
+              ) : (
+                <table className="table table-bordered table-hover">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Phone</th>
+                      <th>Role</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {userList.map((user) => (
+                      <tr key={user.id}>
+                        <td>{user.name}</td>
+                        <td>{user.email}</td>
+                        <td>{user.phone}</td>
+                        <td>{user.role}</td>
+                        <td>
+                          <button className="btn btn-sm btn-info me-2" onClick={() => handleEditUser(user)}>
+                            <i className="fas fa-edit"></i>
+                          </button>
+                          <button className="btn btn-sm btn-danger" onClick={() => handleDeleteUser(user)}>
+                            <i className="fas fa-trash"></i>
+                          </button>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {users.map((user) => (
-                        <tr key={user.id}>
-                          <td>{user.id}</td>
-                          <td>{user.name}</td>
-                          <td>{user.email}</td>
-                          <td>{user.phone}</td>
-                          <td>
-                            <span className={`badge ${user.role === 'admin' ? 'bg-danger' : 'bg-primary'}`}>
-                              {user.role}
-                            </span>
-                          </td>
-                          <td>
-                            <div className="btn-group btn-group-sm">
-                              <button className="btn btn-outline-primary">
-                                <i className="fas fa-edit"></i>
-                              </button>
-                              <button className="btn btn-outline-info">
-                                <i className="fas fa-eye"></i>
-                              </button>
-                              <button className="btn btn-outline-danger">
-                                <i className="fas fa-trash"></i>
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+              <UserModal
+                open={showUserModal}
+                onClose={() => setShowUserModal(false)}
+                user={editingUser}
+                onSave={handleSaveUser}
+              />
             </div>
           )}
 
           {/* Drones Tab */}
           {activeTab === 'drones' && (
-            <div className="card card-custom">
-              <div className="card-header d-flex justify-content-between align-items-center">
-                <h5 className="mb-0">
-                  <i className="fas fa-drone me-2"></i>
-                  Drone Management
-                </h5>
-                <Link to="/admin/drones/new" className="btn btn-primary-custom btn-sm">
-                  <i className="fas fa-plus me-1"></i>
-                  Add Drone
-                </Link>
+            <div className="tab-pane active">
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <h4>Drones</h4>
+                <button className="btn btn-success" onClick={handleAddDrone}>
+                  <i className="fas fa-plus me-2"></i>Add Drone
+                </button>
               </div>
-              <div className="card-body">
-                <div className="table-responsive">
-                  <table className="table table-hover">
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>Model</th>
-                        <th>Brand</th>
-                        <th>Status</th>
-                        <th>Price/Hour</th>
-                        <th>Actions</th>
+              {droneLoading ? (
+                <div>Loading...</div>
+              ) : (
+                <table className="table table-bordered table-hover">
+                  <thead>
+                    <tr>
+                      <th>Model</th>
+                      <th>Brand</th>
+                      <th>Status</th>
+                      <th>Price/Hour</th>
+                      <th>Battery</th>
+                      <th>Location</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {droneList.map((drone) => (
+                      <tr key={drone.id}>
+                        <td>{drone.model}</td>
+                        <td>{drone.brand}</td>
+                        <td>{drone.status}</td>
+                        <td>₹{drone.pricePerHour}</td>
+                        <td>{drone.batteryLife} min</td>
+                        <td>{drone.location}</td>
+                        <td>
+                          <button className="btn btn-sm btn-info me-2" onClick={() => handleEditDrone(drone)}>
+                            <i className="fas fa-edit"></i>
+                          </button>
+                          <button className="btn btn-sm btn-danger" onClick={() => handleDeleteDrone(drone)}>
+                            <i className="fas fa-trash"></i>
+                          </button>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {drones.map((drone) => (
-                        <tr key={drone.id}>
-                          <td>{drone.id}</td>
-                          <td>{drone.model}</td>
-                          <td>{drone.brand}</td>
-                          <td>{getDroneStatusBadge(drone.status)}</td>
-                          <td>${drone.pricePerHour}</td>
-                          <td>
-                            <div className="btn-group btn-group-sm">
-                              <button className="btn btn-outline-primary">
-                                <i className="fas fa-edit"></i>
-                              </button>
-                              <button className="btn btn-outline-info">
-                                <i className="fas fa-eye"></i>
-                              </button>
-                              <button className="btn btn-outline-warning">
-                                <i className="fas fa-tools"></i>
-                              </button>
-                              <button className="btn btn-outline-danger">
-                                <i className="fas fa-trash"></i>
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+              <DroneModal
+                open={showDroneModal}
+                onClose={() => setShowDroneModal(false)}
+                drone={editingDrone}
+                onSave={handleSaveDrone}
+              />
             </div>
           )}
 
           {/* Bookings Tab */}
           {activeTab === 'bookings' && (
-            <div className="card card-custom">
-              <div className="card-header">
-                <h5 className="mb-0">
-                  <i className="fas fa-calendar-check me-2"></i>
-                  Booking Management
-                </h5>
+            <div className="tab-pane active">
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <h4>Bookings</h4>
               </div>
-              <div className="card-body">
-                <div className="table-responsive">
-                  <table className="table table-hover">
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>User</th>
-                        <th>Drone</th>
-                        <th>Status</th>
-                        <th>Amount</th>
-                        <th>Actions</th>
+              {bookingLoading ? (
+                <div>Loading...</div>
+              ) : (
+                <table className="table table-bordered table-hover">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>User</th>
+                      <th>Drone</th>
+                      <th>Status</th>
+                      <th>Start</th>
+                      <th>End</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {bookingList.map((booking) => (
+                      <tr key={booking.id}>
+                        <td>{booking.id}</td>
+                        <td>{booking.user?.name}</td>
+                        <td>{booking.drone?.model}</td>
+                        <td>{booking.status}</td>
+                        <td>{new Date(booking.startTime).toLocaleString()}</td>
+                        <td>{new Date(booking.endTime).toLocaleString()}</td>
+                        <td>
+                          <button className="btn btn-sm btn-info me-2" onClick={() => handleViewBooking(booking)}>
+                            <i className="fas fa-eye"></i>
+                          </button>
+                          <button className="btn btn-sm btn-danger" onClick={() => handleDeleteBooking(booking)}>
+                            <i className="fas fa-trash"></i>
+                          </button>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {bookings.map((booking) => (
-                        <tr key={booking.id}>
-                          <td>{booking.id}</td>
-                          <td>{booking.user?.name}</td>
-                          <td>{booking.drone?.model}</td>
-                          <td>{getStatusBadge(booking.status)}</td>
-                          <td>${booking.totalAmount}</td>
-                          <td>
-                            <div className="btn-group btn-group-sm">
-                              <button className="btn btn-outline-primary">
-                                <i className="fas fa-eye"></i>
-                              </button>
-                              <select
-                                className="form-select form-select-sm"
-                                value={booking.status}
-                                onChange={(e) => handleStatusUpdate(booking.id, e.target.value)}
-                              >
-                                <option value="confirmed">Confirmed</option>
-                                <option value="in-progress">In Progress</option>
-                                <option value="completed">Completed</option>
-                                <option value="cancelled">Cancelled</option>
-                              </select>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+              <BookingModal
+                open={showBookingModal}
+                onClose={() => setShowBookingModal(false)}
+                booking={selectedBooking}
+                onStatusChange={handleStatusChange}
+              />
             </div>
           )}
         </div>
+        <PenaltyRatingRevenueTabs />
       </div>
     </div>
   );

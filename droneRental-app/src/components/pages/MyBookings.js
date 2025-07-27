@@ -3,6 +3,10 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useBooking } from '../../context/BookingContext';
 import { toast } from 'react-toastify';
+import PaymentModal from './PaymentModal';
+import PenaltyModal from './PenaltyModal';
+import RatingModal from './RatingModal';
+import UndertakingModal from './UndertakingModal';
 
 const MyBookings = () => {
   const { user } = useAuth();
@@ -10,6 +14,16 @@ const MyBookings = () => {
   const [loading, setLoading] = useState(true);
   const [selectedStatus, setSelectedStatus] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [showPenaltyModal, setShowPenaltyModal] = useState(false);
+  const [selectedPenalty, setSelectedPenalty] = useState(null);
+  const [selectedPenaltyBooking, setSelectedPenaltyBooking] = useState(null);
+  const [showRatingModal, setShowRatingModal] = useState(false);
+  const [selectedRatingBooking, setSelectedRatingBooking] = useState(null);
+  const [showUndertakingModal, setShowUndertakingModal] = useState(false);
+  const [selectedUndertaking, setSelectedUndertaking] = useState(null);
+  const [selectedUndertakingBooking, setSelectedUndertakingBooking] = useState(null);
 
   const statuses = ['All', 'confirmed', 'in-progress', 'completed', 'cancelled'];
 
@@ -40,6 +54,55 @@ const MyBookings = () => {
         toast.error('Failed to cancel booking');
       }
     }
+  };
+
+  const handleOpenPaymentModal = (booking) => {
+    setSelectedBooking(booking);
+    setShowPaymentModal(true);
+  };
+  const handleClosePaymentModal = () => {
+    setShowPaymentModal(false);
+    setSelectedBooking(null);
+  };
+  const handlePaymentSuccess = () => {
+    fetchBookings();
+  };
+
+  const handleOpenPenaltyModal = (penalty, booking) => {
+    setSelectedPenalty(penalty);
+    setSelectedPenaltyBooking(booking);
+    setShowPenaltyModal(true);
+  };
+  const handleClosePenaltyModal = () => {
+    setShowPenaltyModal(false);
+    setSelectedPenalty(null);
+    setSelectedPenaltyBooking(null);
+  };
+  const handlePenaltyPaymentSuccess = () => {
+    fetchBookings();
+  };
+
+  const handleOpenRatingModal = (booking) => {
+    setSelectedRatingBooking(booking);
+    setShowRatingModal(true);
+  };
+  const handleCloseRatingModal = () => {
+    setShowRatingModal(false);
+    setSelectedRatingBooking(null);
+  };
+  const handleRatingSuccess = () => {
+    fetchBookings();
+  };
+
+  const handleOpenUndertakingModal = (undertaking, booking) => {
+    setSelectedUndertaking(undertaking);
+    setSelectedUndertakingBooking(booking);
+    setShowUndertakingModal(true);
+  };
+  const handleCloseUndertakingModal = () => {
+    setShowUndertakingModal(false);
+    setSelectedUndertaking(null);
+    setSelectedUndertakingBooking(null);
   };
 
   const getStatusBadge = (status) => {
@@ -342,14 +405,43 @@ const MyBookings = () => {
                               </button>
                             )}
                             
+                            {/* Payment Button */}
+                            {booking.payments && booking.payments[0]?.paymentStatus === 'pending' && (
+                              <button
+                                className="btn btn-outline-success btn-sm"
+                                onClick={() => handleOpenPaymentModal(booking)}
+                              >
+                                <i className="fas fa-credit-card me-1"></i>
+                                Pay Now
+                              </button>
+                            )}
+                            
                             {booking.status === 'completed' && !booking.ratings?.length && (
-                              <Link 
-                                to={`/bookings/${booking.id}/rate`} 
-                                className="btn btn-outline-warning btn-sm"
+                              <button
+                                className="btn btn-outline-warning btn-sm mt-2"
+                                onClick={() => handleOpenRatingModal(booking)}
                               >
                                 <i className="fas fa-star me-1"></i>
                                 Rate
-                              </Link>
+                              </button>
+                            )}
+                            {booking.penalties && booking.penalties.length > 0 && (
+                              <button
+                                className="btn btn-outline-danger btn-sm mt-2"
+                                onClick={() => handleOpenPenaltyModal(booking.penalties[0], booking)}
+                              >
+                                <i className="fas fa-exclamation-triangle me-1"></i>
+                                View Penalty
+                              </button>
+                            )}
+                            {booking.undertakings && booking.undertakings.length > 0 && (
+                              <button
+                                className="btn btn-outline-info btn-sm mt-2"
+                                onClick={() => handleOpenUndertakingModal(booking.undertakings[0], booking)}
+                              >
+                                <i className="fas fa-file-signature me-1"></i>
+                                View Undertaking
+                              </button>
                             )}
                           </div>
                         </div>
@@ -387,6 +479,35 @@ const MyBookings = () => {
           </div>
         </div>
       </div>
+      {/* Payment Modal */}
+      <PaymentModal
+        open={showPaymentModal}
+        onClose={handleClosePaymentModal}
+        booking={selectedBooking}
+        onPaymentSuccess={handlePaymentSuccess}
+      />
+      {/* Penalty Modal */}
+      <PenaltyModal
+        open={showPenaltyModal}
+        onClose={handleClosePenaltyModal}
+        penalty={selectedPenalty}
+        booking={selectedPenaltyBooking}
+        onPaymentSuccess={handlePenaltyPaymentSuccess}
+      />
+      {/* Rating Modal */}
+      <RatingModal
+        open={showRatingModal}
+        onClose={handleCloseRatingModal}
+        booking={selectedRatingBooking}
+        onRatingSuccess={handleRatingSuccess}
+      />
+      {/* Undertaking Modal */}
+      <UndertakingModal
+        open={showUndertakingModal}
+        onClose={handleCloseUndertakingModal}
+        undertaking={selectedUndertaking}
+        booking={selectedUndertakingBooking}
+      />
     </div>
   );
 };
