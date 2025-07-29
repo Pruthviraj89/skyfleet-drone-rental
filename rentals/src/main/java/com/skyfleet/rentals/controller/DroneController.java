@@ -20,7 +20,7 @@ public class DroneController {
 
     private DroneService droneService;
 
-    @PostMapping
+    @PostMapping("/add/drone")
     public ResponseEntity<DroneResponseDTO> createDrone(@RequestBody DroneRequestDTO drone) {
         return ResponseEntity.ok(droneService.saveDrone(drone));
     }

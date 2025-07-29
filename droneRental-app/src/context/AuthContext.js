@@ -91,8 +91,10 @@ export const AuthProvider = ({ children }) => {
 
       // Set auth token header
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+     
       
       const response = await api.get('/api/users/me');
+      
       dispatch({
         type: AUTH_ACTIONS.USER_LOADED,
         payload: response.data
