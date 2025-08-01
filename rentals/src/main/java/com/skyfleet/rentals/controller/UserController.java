@@ -2,16 +2,25 @@ package com.skyfleet.rentals.controller;
 
 
 import com.skyfleet.rentals.config.JwtUtils;
+
 import com.skyfleet.rentals.dto.AddUserDTO;
 import com.skyfleet.rentals.dto.ApiResponse;
 import com.skyfleet.rentals.dto.AuthResponse;
 import com.skyfleet.rentals.dto.UserLoginDTO;
 import com.skyfleet.rentals.dto.UserResponseDTO;
+import com.skyfleet.rentals.entity.Role;
+import com.skyfleet.rentals.entity.User;
 import com.skyfleet.rentals.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -96,6 +105,37 @@ public class UserController {
 						jwtUtils.generateJwtToken(successfulAuth)
 						));
 	}
+    
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
+        }
+
+        // Extract principal (usually username/email)
+        String email = authentication.getName(); // Since you used email as principal
+        
+       UserResponseDTO entity= userService.getUserByEmailAfterTokenVerification(email);
+        
+        
+//        Optional<String> roles = authentication.getAuthorities()
+//                                           .stream()
+//                                           .map(grantedAuthority -> grantedAuthority.getAuthority())
+//                                           .findFirst();
+//        System.out.println("this is what i want: "+roles);
+
+        return ResponseEntity.ok().body(
+            Map.of(
+                "message", "Token is valid",
+                "email", entity.getEmail(),
+                "role",entity.getRole(),
+                "name",entity.getName(),
+                "id",entity.getId()
+                
+            )
+        );
+    }
+
     
     
     

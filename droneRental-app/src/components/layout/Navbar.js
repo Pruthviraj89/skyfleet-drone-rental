@@ -65,7 +65,7 @@ const Navbar = () => {
                 </Link>
               </li>
             )}
-            {isAuthenticated && user?.role === 'ADMIN' && (
+            {isAuthenticated && user?.role === 'ROLE_ADMIN' && (
               <li className="nav-item">
                 <Link className={`nav-link ${isActive('/admin')}`} to="/admin">
                   <i className="fas fa-cog me-1"></i>

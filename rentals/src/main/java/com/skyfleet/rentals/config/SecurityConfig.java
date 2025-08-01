@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -37,10 +38,11 @@ public class SecurityConfig  implements WebMvcConfigurer{
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-    	http.csrf(csrf->csrf.disable()).authorizeHttpRequests(auth->
-    	auth.requestMatchers("/v*/api-docs/**","/swagger-ui/**","/api/drones", "/api/users/auth/login","/api/ratings/**","/api/users/auth/register")
+    	http.csrf(csrf->csrf.disable()).cors(Customizer.withDefaults()).authorizeHttpRequests(auth->
+    	auth.requestMatchers("/v*/api-docs/**","/api/undertakings/**","/api/users/me","/swagger-ui/**","/api/drones", "/api/users/auth/login","/api/ratings/**","/api/users/auth/register")
 		.permitAll()
-		.requestMatchers("/api/drones/add/**").hasAuthority("ADMIN")
+		.requestMatchers("/api/drones/add/*","/all/payments").hasAuthority("ROLE_ADMIN")
+		.requestMatchers("/api/bookings","/api/payments","/api/ratings/**","/api/drones/getById/*").hasAuthority("ROLE_USER")
 		.anyRequest().authenticated()).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
     	// form login is enabled by default , to disable it
     			http.formLogin(form -> form.disable());

@@ -13,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 
@@ -53,8 +54,14 @@ public class JwtUtils {
 	public String generateJwtToken(Authentication authentication) {
 		log.info("generate jwt token " + authentication);// contains verified user details
 		User userPrincipal = (User) authentication.getPrincipal();
+		User entity=new User();
+		entity.setEmail(userPrincipal.getEmail());
+		entity.setId(userPrincipal.getId());
+		entity.setRole(userPrincipal.getRole());
+		entity.setName(userPrincipal.getName());		
 		return Jwts.builder() // JWTs : a Factory class , used to create JWT tokens
-				.subject((userPrincipal.getEmail())) // setting subject part of the token
+				.subject((userPrincipal.getEmail()))// setting subject part of the token
+				.claim("user", entity)
 				.issuedAt(new Date())// Sets the JWT Claims iat (issued at) value of current date
 				.expiration(new Date((new Date()).getTime() + jwtExpirationMs))// Sets the JWT Claims exp
 																				// (expiration) value.

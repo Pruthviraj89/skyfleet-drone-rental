@@ -30,7 +30,7 @@ public class DroneController {
         return ResponseEntity.ok(droneService.getAllDrones());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("getById/{id}")
     public ResponseEntity<DroneResponseDTO> getDroneById(@PathVariable Long id) {
     	return ResponseEntity.ok(droneService.getDroneById(id));
     }

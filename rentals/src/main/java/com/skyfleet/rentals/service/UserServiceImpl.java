@@ -80,4 +80,19 @@ public class UserServiceImpl implements UserService {
 		else
 			throw new ApiException("User Not Found");
 	}
+
+	@Override
+	public UserResponseDTO getUserByEmailAfterTokenVerification(String email) {
+		// TODO Auto-generated method stub
+				User Entity= userRepository.findByEmail(email);
+				
+				if(Entity!=null)
+					return modelMapper.map(Entity, UserResponseDTO.class);
+				else
+					throw new ApiException("User Not Found");
+	}
+	
+	
+	
+	
 }
