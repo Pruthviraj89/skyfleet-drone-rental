@@ -14,6 +14,7 @@ import com.skyfleet.rentals.repository.UserRepository;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +30,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private ModelMapper modelMapper;
     
+    @Autowired
+    private PasswordEncoder encoder;
+    
 
     @Override
     public UserResponseDTO saveUser(AddUserDTO user) {
@@ -36,7 +40,8 @@ public class UserServiceImpl implements UserService {
     	   throw new ApiException("User Already Exists....!!!!");
        User entity= modelMapper.map(user, User.class);
        
-       entity.setRole(Role.USER);
+       entity.setRole(Role.ROLE_USER);
+       entity.setPassword(encoder.encode(entity.getPassword()));
         
         User persistEntity=userRepository.save(entity);
         
@@ -75,4 +80,19 @@ public class UserServiceImpl implements UserService {
 		else
 			throw new ApiException("User Not Found");
 	}
+
+	@Override
+	public UserResponseDTO getUserByEmailAfterTokenVerification(String email) {
+		// TODO Auto-generated method stub
+				User Entity= userRepository.findByEmail(email);
+				
+				if(Entity!=null)
+					return modelMapper.map(Entity, UserResponseDTO.class);
+				else
+					throw new ApiException("User Not Found");
+	}
+	
+	
+	
+	
 }

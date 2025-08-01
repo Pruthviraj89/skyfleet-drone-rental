@@ -68,7 +68,7 @@ export const droneAPI = {
   getAll: (params = {}) => api.get('/api/drones', { params }),
   
   // Get drone by ID
-  getById: (id) => api.get(`/api/drones/${id}`),
+  getById: (id) => api.get(`/api/drones/getById/${id}`),
   
   // Create new drone (admin only)
   create: (droneData) => api.post('/api/drones', droneData),

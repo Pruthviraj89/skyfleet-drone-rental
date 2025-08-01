@@ -2,6 +2,8 @@ import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import api from '../services/api';
 
+import {jwtDecode} from 'jwt-decode';
+
 // Initial state
 const initialState = {
   user: null,
@@ -28,12 +30,14 @@ const authReducer = (state, action) => {
     case AUTH_ACTIONS.LOGIN_SUCCESS:
     case AUTH_ACTIONS.REGISTER_SUCCESS:
       localStorage.setItem('token', action.payload.token);
+      const decoded = jwtDecode(action.payload.token);
+      console.log(decoded.user);
       return {
         ...state,
         token: action.payload.token,
         isAuthenticated: true,
         loading: false,
-        user: action.payload.user
+        user: decoded.user
       };
     
     case AUTH_ACTIONS.USER_LOADED:
@@ -91,11 +95,23 @@ export const AuthProvider = ({ children }) => {
 
       // Set auth token header
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+     
       
       const response = await api.get('/api/users/me');
+      console.log(response.data); 
+
+      const user={
+
+        role: response.data.role,
+        name: response.data.name,
+        email: response.data.email,
+        id: response.data.id
+      };
+      
       dispatch({
         type: AUTH_ACTIONS.USER_LOADED,
-        payload: response.data
+        payload: user
+       
       });
     } catch (error) {
       console.error('Error loading user:', error);

@@ -12,4 +12,5 @@ public interface UserService {
     UserResponseDTO getUserById(Long id);
     void deleteUser(Long id);
     UserResponseDTO getUserByEmail(UserLoginDTO user);
+    UserResponseDTO getUserByEmailAfterTokenVerification(String email);
 }

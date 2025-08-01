@@ -1,15 +1,32 @@
 package com.skyfleet.rentals.controller;
 
+
+import com.skyfleet.rentals.config.JwtUtils;
+
 import com.skyfleet.rentals.dto.AddUserDTO;
 import com.skyfleet.rentals.dto.ApiResponse;
+import com.skyfleet.rentals.dto.AuthResponse;
 import com.skyfleet.rentals.dto.UserLoginDTO;
 import com.skyfleet.rentals.dto.UserResponseDTO;
+import com.skyfleet.rentals.entity.Role;
+import com.skyfleet.rentals.entity.User;
 import com.skyfleet.rentals.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -17,7 +34,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/users")
 @AllArgsConstructor
 public class UserController {
+	
+	private final AuthenticationManager authenticationManager;
     private UserService userService;
+    private JwtUtils jwtUtils;
     
     /*
 	 *
@@ -30,7 +50,7 @@ public class UserController {
 	 * 
 	 */
 
-    @PostMapping
+    @PostMapping("/auth/register")
     public ResponseEntity<?> createUser(@RequestBody AddUserDTO user) {
        // return ResponseEntity.ok(userService.saveUser(user));
     	return ResponseEntity.status(HttpStatus.CREATED)
@@ -40,11 +60,11 @@ public class UserController {
     }
     
     
-    @PostMapping("/auth/login")
-    public ResponseEntity<?> getUserByEmailPassword(@RequestBody UserLoginDTO user) {
-      UserResponseDTO entity=userService.getUserByEmail(user);
-        return  ResponseEntity.ok(entity) ;
-    }
+//    @PostMapping("/auth/login")
+//    public ResponseEntity<?> getUserByEmailPassword(@RequestBody UserLoginDTO user) {
+//      UserResponseDTO entity=userService.getUserByEmail(user);
+//        return  ResponseEntity.ok(entity) ;
+//    }
     
 
     @GetMapping
@@ -63,4 +83,60 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.ok(new ApiResponse("User Deleted Successfully"));
     }
+    @PostMapping("/auth/login")
+	public ResponseEntity<?> userSignIn(@RequestBody  UserLoginDTO dto) {
+		System.out.println("in user sign in " + dto);
+		// 1. create Authentication token (UsernamePasswordAuthToken - username(em) ,
+		// pwd
+		UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(dto.getEmail(),
+				dto.getPassword());
+		System.out.println("is authenticated " + authToken.isAuthenticated());// f
+		// 2. invoke AuthenticationManager's - authenticate method - spring sec supplied
+		Authentication successfulAuth = authenticationManager.authenticate(authToken);
+		// in case of failure - throws AuthenticationException
+		// in case of success- rets user details object - within auth
+		// 3. => success
+		System.out.println("is authenticated " + successfulAuth.isAuthenticated());// true
+		System.out.println("principal " + successfulAuth.getPrincipal());// user details + granted authorities
+		System.out.println("principal class" + successfulAuth.getPrincipal().getClass());// com.app.entities.UserEntity
+																							// - UserDetails
+		return ResponseEntity.status(HttpStatus.CREATED)
+				.body(new AuthResponse("successful login ....", 
+						jwtUtils.generateJwtToken(successfulAuth)
+						));
+	}
+    
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
+        }
+
+        // Extract principal (usually username/email)
+        String email = authentication.getName(); // Since you used email as principal
+        
+       UserResponseDTO entity= userService.getUserByEmailAfterTokenVerification(email);
+        
+        
+//        Optional<String> roles = authentication.getAuthorities()
+//                                           .stream()
+//                                           .map(grantedAuthority -> grantedAuthority.getAuthority())
+//                                           .findFirst();
+//        System.out.println("this is what i want: "+roles);
+
+        return ResponseEntity.ok().body(
+            Map.of(
+                "message", "Token is valid",
+                "email", entity.getEmail(),
+                "role",entity.getRole(),
+                "name",entity.getName(),
+                "id",entity.getId()
+                
+            )
+        );
+    }
+
+    
+    
+    
 }

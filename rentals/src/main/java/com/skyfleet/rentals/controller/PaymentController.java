@@ -24,7 +24,7 @@ public class PaymentController {
         return ResponseEntity.ok(paymentService.savePayment(payment));
     }
 
-    @GetMapping
+    @GetMapping("/all/payments")
     public ResponseEntity<List<PaymentResponseDTO>> getAllPayments() {
         return ResponseEntity.ok(paymentService.getAllPayments());
     }

@@ -29,7 +29,7 @@ public class BookingController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse("Booking Created"));
     }
 
-    @GetMapping
+    @GetMapping("/all/bookings")
     public ResponseEntity<List<BookingResponseDTO>> getAllBookings() {
         return ResponseEntity.ok(bookingService.getAllBookings());
     }

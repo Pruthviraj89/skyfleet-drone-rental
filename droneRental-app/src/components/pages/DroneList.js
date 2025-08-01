@@ -19,7 +19,7 @@ const DroneList = () => {
   });
 
   const brands = ['All', 'DJI', 'Autel', 'Parrot', 'Yuneec', 'Skydio'];
-  const statuses = ['All', 'available', 'booked', 'maintenance'];
+  const statuses = ['All', 'AVAILABLE', 'BOOKED', 'MAINTENANCE'];
 
   useEffect(() => {
     fetchDrones();
@@ -41,8 +41,9 @@ const DroneList = () => {
       };
 
       const response = await droneAPI.getAll(params);
+      console.log(response.data);
       setDrones(response.data.content || response.data);
-      setTotalPages(response.data.totalPages || 1);
+      setTotalPages(1);
     } catch (error) {
       console.error('Error fetching drones:', error);
       // Use mock data for demo
@@ -146,9 +147,9 @@ const DroneList = () => {
 
   const getStatusBadge = (status) => {
     const statusConfig = {
-      'available': { class: 'bg-success', icon: 'fa-check' },
-      'booked': { class: 'bg-warning', icon: 'fa-clock' },
-      'maintenance': { class: 'bg-danger', icon: 'fa-tools' }
+      'AVAILABLE': { class: 'bg-success', icon: 'fa-check' },
+      'BOOKED': { class: 'bg-warning', icon: 'fa-clock' },
+      'MAINTENANCE': { class: 'bg-danger', icon: 'fa-tools' }
     };
     
     const config = statusConfig[status] || { class: 'bg-secondary', icon: 'fa-question' };
@@ -373,7 +374,7 @@ const DroneList = () => {
                                 Details
                               </Link>
                             </div>
-                            {drone.status === 'available' && (
+                            {drone.status === 'AVAILABLE' && (
                               <Link to={`/book/${drone.id}`} className="btn btn-success w-100">
                                 <i className="fas fa-calendar-plus me-1"></i>
                                 Book Now
