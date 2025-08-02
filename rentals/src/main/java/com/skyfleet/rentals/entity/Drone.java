@@ -48,7 +48,7 @@ public class Drone  extends BaseEntity{
     private String guideUrl;
     
     @Column(name = "drone_price", nullable = false)
-    private BigDecimal droneprice;
+    private BigDecimal dronePrice;
 
     @OneToMany(mappedBy = "drone", cascade = CascadeType.ALL)
     @JsonIgnore

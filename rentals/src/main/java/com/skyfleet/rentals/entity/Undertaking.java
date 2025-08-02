@@ -30,7 +30,7 @@ public class Undertaking  extends BaseEntity{
     private Boolean isAccepted=false;
 
     @Column(name = "deposit_amount", nullable = false)
-    private BigDecimal depositAmount;
+    private BigDecimal depositAmount=BigDecimal.valueOf(0);
 
     @Column(name = "damage_clause_text", nullable = false)
     private String damageClauseText;

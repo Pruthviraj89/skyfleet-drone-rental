@@ -6,7 +6,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import com.skyfleet.rentals.entity.Role;
+import com.skyfleet.rentals.entity.Undertaking;
 import com.skyfleet.rentals.entity.User;
+import com.skyfleet.rentals.repository.UndertakingRepository;
 import com.skyfleet.rentals.repository.UserRepository;
 
 import lombok.AllArgsConstructor;
@@ -17,6 +19,8 @@ public class InitData implements CommandLineRunner {
 
     
     private UserRepository userRepository;
+    
+    private UndertakingRepository undertakingRepository;
 
     @Override
     public void run(String... args) {
@@ -29,6 +33,14 @@ public class InitData implements CommandLineRunner {
             admin.setRole(Role.ROLE_ADMIN);
             admin.setAddress("Headquarters");
             userRepository.save(admin);
+        }
+        
+        if(undertakingRepository.count()==0) {
+        	Undertaking entity= new Undertaking();
+        	entity.setDamageClauseText("I agree to pay for any damage caused to the drone during the rental period.");
+        	entity.setUniquetext(true);
+        	undertakingRepository.save(entity);
+        	
         }
     }
 }

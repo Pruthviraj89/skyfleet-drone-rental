@@ -63,14 +63,25 @@ public class UndertakingServiceImpl implements UndertakingService {
   
     
     
-    public BigDecimal calculateDeposit(BigDecimal perHourPrice) {
-    	  final BigDecimal MIN_DEPOSIT = BigDecimal.valueOf(500);
-   	   final BigDecimal MULTIPLIER = BigDecimal.valueOf(10);
-   	  
-   	  final BigDecimal estimated=   BigDecimal.valueOf(perHourPrice.doubleValue() * MULTIPLIER.doubleValue());
-   	  
-   return	  estimated.max(MIN_DEPOSIT);
+//    public BigDecimal calculateDeposit(BigDecimal perHourPrice) {
+//    	  final BigDecimal MIN_DEPOSIT = BigDecimal.valueOf(500);
+//   	   final BigDecimal MULTIPLIER = BigDecimal.valueOf(10);
+//   	  
+//   	  final BigDecimal estimated=   BigDecimal.valueOf(perHourPrice.doubleValue() * MULTIPLIER.doubleValue());
+//   	  
+//   return	  estimated.max(MIN_DEPOSIT);
+//    }
+    
+    public BigDecimal calculateSecurityDeposit(BigDecimal dronePrice) {
+        if (dronePrice.doubleValue() <= 5000 && dronePrice.doubleValue() <= 13000 ) {
+            return BigDecimal.valueOf(dronePrice.doubleValue() * 0.10);
+        } else if (dronePrice.doubleValue() <= 20000) {
+            return BigDecimal.valueOf(  dronePrice.doubleValue() * 0.15);
+        } else {
+            return BigDecimal.valueOf( dronePrice.doubleValue() * 0.25); // High-end drone
+        }
     }
+
     
     
 }

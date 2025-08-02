@@ -79,13 +79,13 @@ public class BookingServiceImpl implements BookingService {
 				newEntity.setDamageClauseText(e.getDamageClauseText());
 				
 				
-				newEntity.setDepositAmount(undertakingServiceImpl.calculateDeposit(book.getTotalAmount()));
+				newEntity.setDepositAmount(undertakingServiceImpl.calculateSecurityDeposit(drone.getDronePrice()));
+				book.setTotalAmount( BigDecimal.valueOf(book.getTotalAmount().doubleValue()+newEntity.getDepositAmount().doubleValue()));
 				newEntity.setIsAccepted(true);
 				newEntity.setUpdatedOn(LocalDateTime.now());
     			newUndertaking.add(newEntity);
-    			
-    			
     			});
+    		
     		userRepository.save(user);
     		bookingRepository.save(book);
     		undertakingRespository.saveAll(newUndertaking);	
