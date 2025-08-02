@@ -4,6 +4,9 @@ import com.skyfleet.rentals.dto.PenaltyRequestDTO;
 import com.skyfleet.rentals.dto.PenaltyResponseDTO;
 import com.skyfleet.rentals.entity.Penalty;
 import com.skyfleet.rentals.service.PenaltyService;
+
+import lombok.AllArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,9 +15,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/penalties")
+@AllArgsConstructor
 public class PenaltyController {
 
-    @Autowired
+    
     private PenaltyService penaltyService;
 
     @PostMapping

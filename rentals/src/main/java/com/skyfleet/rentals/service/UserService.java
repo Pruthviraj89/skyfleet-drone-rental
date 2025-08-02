@@ -13,4 +13,5 @@ public interface UserService {
     void deleteUser(Long id);
     UserResponseDTO getUserByEmail(UserLoginDTO user);
     UserResponseDTO getUserByEmailAfterTokenVerification(String email);
+    UserResponseDTO updateUser(User user);
 }

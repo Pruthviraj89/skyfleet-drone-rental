@@ -35,5 +35,6 @@ public class BookingRequestDTO extends BaseDTO {
 	    private DeliveryStatus deliverStatus;
 	   
 	    private boolean undertakingIsAccepted;
+	    private String address;
 
 }

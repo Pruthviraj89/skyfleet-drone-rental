@@ -39,10 +39,10 @@ public class SecurityConfig  implements WebMvcConfigurer{
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
     	http.csrf(csrf->csrf.disable()).cors(Customizer.withDefaults()).authorizeHttpRequests(auth->
-    	auth.requestMatchers("/v*/api-docs/**","/api/undertakings/**","/api/users/me","/swagger-ui/**","/api/drones", "/api/users/auth/login","/api/ratings/**","/api/users/auth/register")
+    	auth.requestMatchers("/v*/api-docs/**","/api/undertakings","/api/users/me","/swagger-ui/**","/api/drones", "/api/users/auth/login","/api/ratings/**","/api/users/auth/register")
 		.permitAll()
 		.requestMatchers("/api/drones/add/*","/all/payments").hasAuthority("ROLE_ADMIN")
-		.requestMatchers("/api/bookings","/api/payments","/api/ratings/**","/api/drones/getById/*").hasAuthority("ROLE_USER")
+		.requestMatchers("/api/bookings","/api/payments","/api/ratings/**","/api/drones/getById/*","/api/bookings/all/bookings").hasAuthority("ROLE_USER")
 		.anyRequest().authenticated()).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
     	// form login is enabled by default , to disable it
     			http.formLogin(form -> form.disable());

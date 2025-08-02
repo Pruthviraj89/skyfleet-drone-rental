@@ -7,7 +7,7 @@ const UserModal = ({ open, onClose, user, onSave }) => {
     email: '',
     phone: '',
     address: '',
-    role: 'user',
+    role: 'ROLE_USER',
     password: '',
   });
   const [submitting, setSubmitting] = useState(false);
@@ -19,11 +19,11 @@ const UserModal = ({ open, onClose, user, onSave }) => {
         email: user.email || '',
         phone: user.phone || '',
         address: user.address || '',
-        role: user.role || 'user',
+        role: user.role || 'ROLE_USER',
         password: '',
       });
     } else {
-      setForm({ name: '', email: '', phone: '', address: '', role: 'user', password: '' });
+      setForm({ name: '', email: '', phone: '', address: '', role: 'ROLE_USER', password: '' });
     }
   }, [user, isEdit, open]);
 
@@ -81,8 +81,8 @@ const UserModal = ({ open, onClose, user, onSave }) => {
               <div className="mb-3">
                 <label className="form-label">Role</label>
                 <select className="form-select" name="role" value={form.role} onChange={handleChange} required>
-                  <option value="user">User</option>
-                  <option value="admin">Admin</option>
+                  <option value="ROLE_USER">User</option>
+                  <option value="ROLE_ADMIN">Admin</option>
                 </select>
               </div>
               {!isEdit && (

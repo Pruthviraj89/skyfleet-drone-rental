@@ -25,7 +25,7 @@ const MyBookings = () => {
   const [selectedUndertaking, setSelectedUndertaking] = useState(null);
   const [selectedUndertakingBooking, setSelectedUndertakingBooking] = useState(null);
 
-  const statuses = ['All', 'confirmed', 'in-progress', 'completed', 'cancelled'];
+  const statuses = ['ALL', 'CONFIRMED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'];
 
   useEffect(() => {
     fetchBookings();
@@ -107,10 +107,10 @@ const MyBookings = () => {
 
   const getStatusBadge = (status) => {
     const statusConfig = {
-      'confirmed': { class: 'bg-success', icon: 'fa-check', text: 'Confirmed' },
-      'in-progress': { class: 'bg-primary', icon: 'fa-play', text: 'In Progress' },
-      'completed': { class: 'bg-info', icon: 'fa-check-double', text: 'Completed' },
-      'cancelled': { class: 'bg-danger', icon: 'fa-times', text: 'Cancelled' }
+      'CONFIRMED': { class: 'bg-success', icon: 'fa-check', text: 'Confirmed' },
+      'IN_PROGRESS': { class: 'bg-primary', icon: 'fa-play', text: 'In Progress' },
+      'COMPLETED': { class: 'bg-info', icon: 'fa-check-double', text: 'Completed' },
+      'CANCELLED': { class: 'bg-danger', icon: 'fa-times', text: 'Cancelled' }
     };
     
     const config = statusConfig[status] || { class: 'bg-secondary', icon: 'fa-question', text: 'Unknown' };
@@ -135,7 +135,7 @@ const MyBookings = () => {
   };
 
   const filteredBookings = bookings.filter(booking => {
-    const matchesStatus = selectedStatus === 'All' || booking.status === selectedStatus;
+    const matchesStatus = selectedStatus === 'ALL' || booking.status === selectedStatus;
     const matchesSearch = searchTerm === '' || 
       booking.drone?.model?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       booking.id.toString().includes(searchTerm);
@@ -145,8 +145,8 @@ const MyBookings = () => {
   const getBookingStats = () => {
     const stats = {
       total: bookings.length,
-      confirmed: bookings.filter(b => b.status === 'confirmed').length,
-      inProgress: bookings.filter(b => b.status === 'in-progress').length,
+      confirmed: bookings.filter(b => b.status === 'CONFIRMED').length,
+      inProgress: bookings.filter(b => b.status === 'IN_PROGRESS').length,
       completed: bookings.filter(b => b.status === 'completed').length,
       cancelled: bookings.filter(b => b.status === 'cancelled').length
     };
@@ -395,7 +395,7 @@ const MyBookings = () => {
                               View Details
                             </Link>
                             
-                            {booking.status === 'confirmed' && (
+                            {booking.status === 'CONFIRMED' && (
                               <button
                                 className="btn btn-outline-danger btn-sm"
                                 onClick={() => handleCancelBooking(booking.id)}
@@ -416,7 +416,7 @@ const MyBookings = () => {
                               </button>
                             )}
                             
-                            {booking.status === 'completed' && !booking.ratings?.length && (
+                            {booking.status === 'COMPLETED' && !booking.ratings?.length && (
                               <button
                                 className="btn btn-outline-warning btn-sm mt-2"
                                 onClick={() => handleOpenRatingModal(booking)}

@@ -4,6 +4,9 @@ import com.skyfleet.rentals.dto.RatingRequestDTO;
 import com.skyfleet.rentals.dto.RatingResponseDTO;
 import com.skyfleet.rentals.entity.Rating;
 import com.skyfleet.rentals.service.RatingService;
+
+import lombok.AllArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,9 +15,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/ratings")
+@AllArgsConstructor
 public class RatingController {
 
-    @Autowired
+   
     private RatingService ratingService;
 
     @PostMapping

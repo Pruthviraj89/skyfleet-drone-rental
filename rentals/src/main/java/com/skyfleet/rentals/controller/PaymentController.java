@@ -4,6 +4,9 @@ import com.skyfleet.rentals.dto.PaymentRequestDTO;
 import com.skyfleet.rentals.dto.PaymentResponseDTO;
 import com.skyfleet.rentals.entity.Payment;
 import com.skyfleet.rentals.service.PaymentService;
+
+import lombok.AllArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,9 +15,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/payments")
+@AllArgsConstructor
 public class PaymentController {
 
-    @Autowired
+    
     private PaymentService paymentService;
     
    

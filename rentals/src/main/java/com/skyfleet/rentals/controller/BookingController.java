@@ -7,7 +7,7 @@ import com.skyfleet.rentals.dto.BookingResponseDTO;
 import com.skyfleet.rentals.entity.Booking;
 import com.skyfleet.rentals.service.BookingService;
 
-
+import lombok.AllArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,9 +18,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/bookings")
+@AllArgsConstructor
 public class BookingController {
 
-    @Autowired
+    
     private BookingService bookingService;
 
     @PostMapping

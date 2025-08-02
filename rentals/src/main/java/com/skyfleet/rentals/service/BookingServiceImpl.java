@@ -39,11 +39,14 @@ public class BookingServiceImpl implements BookingService {
     
     private UserRepository userRepository;
     
+    
     private DroneRepository droneRepository;
     
     private UndertakingRepository undertakingRespository;
     
     private ModelMapper modelMapper;
+    
+    private UndertakingServiceImpl undertakingServiceImpl;
 
     @Override
     public BookingResponseDTO saveBooking(BookingRequestDTO booking) {
@@ -60,7 +63,7 @@ public class BookingServiceImpl implements BookingService {
     	if(booking.isUndertakingIsAccepted())
     	{
     		
-    		
+    		user.setAddress(booking.getAddress());
     		book.setUser(user);
     		book.setDrone(drone);
     		book.setDeliveryDateTime(LocalDateTime.now().plusDays(3));
@@ -74,13 +77,16 @@ public class BookingServiceImpl implements BookingService {
 				Undertaking newEntity=new Undertaking();
 				newEntity.setBooking(book);
 				newEntity.setDamageClauseText(e.getDamageClauseText());
-				newEntity.setDepositAmount(e.getDepositAmount());
+				
+				
+				newEntity.setDepositAmount(undertakingServiceImpl.calculateDeposit(book.getTotalAmount()));
 				newEntity.setIsAccepted(true);
 				newEntity.setUpdatedOn(LocalDateTime.now());
     			newUndertaking.add(newEntity);
     			
     			
     			});
+    		userRepository.save(user);
     		bookingRepository.save(book);
     		undertakingRespository.saveAll(newUndertaking);	
     		BookingResponseDTO rs=modelMapper.map(book, BookingResponseDTO.class);

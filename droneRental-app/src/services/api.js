@@ -147,6 +147,8 @@ export const undertakingAPI = {
   
   // Create undertaking
   create: (undertakingData) => api.post('/api/undertakings', undertakingData),
+
+  getAllUndertakings: () => api.get(`/api/undertakings`),
   
   // Update undertaking
   update: (id, undertakingData) => api.put(`/api/undertakings/${id}`, undertakingData),

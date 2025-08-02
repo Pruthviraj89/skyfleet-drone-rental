@@ -34,4 +34,7 @@ public class Undertaking  extends BaseEntity{
 
     @Column(name = "damage_clause_text", nullable = false)
     private String damageClauseText;
+    
+    @Column(name = "unique_text")
+    private Boolean uniquetext=false;
 }

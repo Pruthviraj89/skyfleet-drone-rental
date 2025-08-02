@@ -107,7 +107,7 @@ export const BookingProvider = ({ children }) => {
   const getBookings = async () => {
     try {
       dispatch({ type: BOOKING_ACTIONS.SET_LOADING });
-      const response = await api.get('/api/bookings');
+      const response = await api.get('/api/bookings/all/bookings');
       dispatch({
         type: BOOKING_ACTIONS.GET_BOOKINGS,
         payload: response.data

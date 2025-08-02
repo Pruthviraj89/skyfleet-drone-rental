@@ -9,8 +9,7 @@ import com.skyfleet.rentals.entity.Role;
 import com.skyfleet.rentals.entity.User;
 import com.skyfleet.rentals.repository.UserRepository;
 
-
-
+import lombok.AllArgsConstructor;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,15 +21,16 @@ import java.util.List;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    @Autowired
+    
     private UserRepository userRepository;
     
-    @Autowired
+    
     private ModelMapper modelMapper;
     
-    @Autowired
+    
     private PasswordEncoder encoder;
     
 
@@ -90,6 +90,15 @@ public class UserServiceImpl implements UserService {
 					return modelMapper.map(Entity, UserResponseDTO.class);
 				else
 					throw new ApiException("User Not Found");
+	}
+
+	@Override
+	public UserResponseDTO updateUser(User user) {
+		  if(userRepository.existsByEmail(user.getEmail()))
+			  userRepository.save(user);
+	        
+	        return modelMapper.map(user, UserResponseDTO.class);
+
 	}
 	
 	
