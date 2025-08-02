@@ -1,6 +1,8 @@
 package com.skyfleet.rentals.dto;
 
 
+import java.math.BigDecimal;
+
 import com.skyfleet.rentals.entity.DroneStatus;
 
 import lombok.Getter;
@@ -32,4 +34,6 @@ public class DroneRequestDTO extends BaseDTO {
 
 	    
 	    private String guideUrl;
+	    
+	    private BigDecimal dronePrice;
 }
