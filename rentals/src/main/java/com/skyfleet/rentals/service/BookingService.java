@@ -11,4 +11,5 @@ public interface BookingService {
     BookingResponseDTO getBookingById(Long id);
     void deleteBooking(Long id);
     void calculateTotalAmount(Booking booking);
+    void updateBookingStatus(Long id, String status);
 }

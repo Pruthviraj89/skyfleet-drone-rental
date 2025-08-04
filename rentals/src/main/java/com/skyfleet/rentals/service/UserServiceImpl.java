@@ -9,26 +9,30 @@ import com.skyfleet.rentals.entity.Role;
 import com.skyfleet.rentals.entity.User;
 import com.skyfleet.rentals.repository.UserRepository;
 
-
-
-
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
 @Transactional
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
-    
-    @Autowired
-    private ModelMapper modelMapper;
-    
+    private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
+
+    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.modelMapper = modelMapper;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public UserResponseDTO saveUser(AddUserDTO user) {
@@ -36,6 +40,8 @@ public class UserServiceImpl implements UserService {
     	   throw new ApiException("User Already Exists....!!!!");
        User entity= modelMapper.map(user, User.class);
        
+       // Encode password before saving
+       entity.setPassword(passwordEncoder.encode(user.getPassword()));
        entity.setRole(Role.USER);
         
         User persistEntity=userRepository.save(entity);
@@ -67,7 +73,6 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserResponseDTO getUserByEmail(UserLoginDTO user) {
-		// TODO Auto-generated method stub
 		User Entity= userRepository.findByEmail(user.getEmail());
 		
 		if(Entity!=null)
@@ -75,4 +80,31 @@ public class UserServiceImpl implements UserService {
 		else
 			throw new ApiException("User Not Found");
 	}
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found with email: " + email);
+        }
+        
+        return new org.springframework.security.core.userdetails.User(
+            user.getEmail(),
+            user.getPassword(),
+            Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
+        );
+    }
+
+    public UserResponseDTO authenticateUser(UserLoginDTO loginDTO) {
+        User user = userRepository.findByEmail(loginDTO.getEmail());
+        if (user == null) {
+            throw new ApiException("User not found");
+        }
+        
+        if (!passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
+            throw new ApiException("Invalid password");
+        }
+        
+        return modelMapper.map(user, UserResponseDTO.class);
+    }
 }

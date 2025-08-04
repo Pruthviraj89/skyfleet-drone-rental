@@ -141,4 +141,18 @@ public class BookingServiceImpl implements BookingService {
         booking.setTotalAmount(total);
         
     }
+
+    @Override
+    public void updateBookingStatus(Long id, String status) {
+        Booking booking = bookingRepository.findById(id)
+            .orElseThrow(() -> new ApiException("Booking not found"));
+        
+        try {
+            BookingStatus bookingStatus = BookingStatus.valueOf(status.toUpperCase());
+            booking.setStatus(bookingStatus);
+            bookingRepository.save(booking);
+        } catch (IllegalArgumentException e) {
+            throw new ApiException("Invalid booking status: " + status);
+        }
+    }
 }

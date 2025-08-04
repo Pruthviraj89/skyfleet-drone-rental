@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import { droneAPI, ratingAPI } from '../../services/api';
+import React, { useState, useEffect } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { droneAPI, ratingAPI } from "../../services/api";
 
 const DroneDetail = () => {
   const { id } = useParams();
@@ -24,18 +24,18 @@ const DroneDetail = () => {
       const response = await droneAPI.getById(id);
       setDrone(response.data);
     } catch (error) {
-      console.error('Error fetching drone details:', error);
+      console.error("Error fetching drone details:", error);
       // Use mock data for demo
       setDrone({
         id: parseInt(id),
-        model: 'Mavic 3 Pro',
-        brand: 'DJI',
-        status: 'available',
+        model: "Mavic 3 Pro",
+        brand: "DJI",
+        status: "AVAILABLE",
         pricePerHour: 25.0,
         batteryLife: 46,
-        location: 'Main Office',
-        imageUrl: '/assets/img/droneimg1.jpeg',
-        guideUrl: 'https://www.dji.com/mavic-3-pro/user-guide'
+        location: "Main Office",
+        imageUrl: "/assets/img/droneimg1.jpeg",
+        guideUrl: "https://www.dji.com/mavic-3-pro/user-guide",
       });
     } finally {
       setLoading(false);
@@ -47,30 +47,30 @@ const DroneDetail = () => {
       const response = await ratingAPI.getByDrone(id);
       setRatings(response.data);
     } catch (error) {
-      console.error('Error fetching ratings:', error);
+      console.error("Error fetching ratings:", error);
       // Use mock data for demo
       setRatings([
         {
           id: 1,
           rating: 5,
-          comment: 'Excellent drone, great battery life and camera quality!',
-          user: { name: 'John Doe' },
-          createdAt: '2024-03-15'
+          comment: "Excellent drone, great battery life and camera quality!",
+          user: { name: "John Doe" },
+          createdAt: "2024-03-15",
         },
         {
           id: 2,
           rating: 4,
-          comment: 'Very good drone, easy to fly and stable.',
-          user: { name: 'Jane Smith' },
-          createdAt: '2024-03-10'
-        }
+          comment: "Very good drone, easy to fly and stable.",
+          user: { name: "Jane Smith" },
+          createdAt: "2024-03-10",
+        },
       ]);
     }
   };
 
   const handleBookNow = () => {
     if (!isAuthenticated) {
-      navigate('/login', { state: { from: { pathname: `/drones/${id}` } } });
+      navigate("/login", { state: { from: { pathname: `/drones/${id}` } } });
       return;
     }
     navigate(`/book/${id}`);
@@ -90,13 +90,29 @@ const DroneDetail = () => {
 
   const getStatusBadge = (status) => {
     const statusConfig = {
-      'available': { class: 'bg-success', icon: 'fa-check', text: 'Available for Rent' },
-      'booked': { class: 'bg-warning', icon: 'fa-clock', text: 'Currently Booked' },
-      'maintenance': { class: 'bg-danger', icon: 'fa-tools', text: 'Under Maintenance' }
+      AVAILABLE: {
+        class: "bg-success",
+        icon: "fa-check",
+        text: "Available for Rent",
+      },
+      BOOKED: {
+        class: "bg-warning",
+        icon: "fa-clock",
+        text: "Currently Booked",
+      },
+      MAINTENANCE: {
+        class: "bg-danger",
+        icon: "fa-tools",
+        text: "Under Maintenance",
+      },
     };
-    
-    const config = statusConfig[status] || { class: 'bg-secondary', icon: 'fa-question', text: 'Unknown Status' };
-    
+
+    const config = statusConfig[status] || {
+      class: "bg-secondary",
+      icon: "fa-question",
+      text: "Unknown Status",
+    };
+
     return (
       <span className={`badge ${config.class} fs-6`}>
         <i className={`fas ${config.icon} me-1`}></i>
@@ -159,11 +175,11 @@ const DroneDetail = () => {
             <div className="drone-gallery">
               <div className="main-image mb-3">
                 <img
-                  src={drone.imageUrl || '/assets/img/droneimg1.jpeg'}
+                  src={drone.imageUrl || "/assets/img/droneimg1.jpeg"}
                   className="img-fluid rounded"
                   alt={`${drone.brand} ${drone.model}`}
                   onError={(e) => {
-                    e.target.src = '/assets/img/droneimg1.jpeg';
+                    e.target.src = "/assets/img/droneimg1.jpeg";
                   }}
                 />
               </div>
@@ -174,18 +190,20 @@ const DroneDetail = () => {
           <div className="col-lg-6">
             <div className="drone-info">
               <div className="d-flex justify-content-between align-items-start mb-3">
-                <h1 className="h2 mb-0">{drone.brand} {drone.model}</h1>
+                <h1 className="h2 mb-0">
+                  {drone.brand} {drone.model}
+                </h1>
                 <span className="badge bg-primary fs-6">{drone.brand}</span>
               </div>
 
               {/* Status */}
-              <div className="mb-4">
-                {getStatusBadge(drone.status)}
-              </div>
+              <div className="mb-4">{getStatusBadge(drone.status)}</div>
 
               {/* Price */}
               <div className="mb-4">
-                <h2 className="text-primary-custom mb-0">${drone.pricePerHour}/hour</h2>
+                <h2 className="text-primary-custom mb-0">
+                  ${drone.pricePerHour}/hour
+                </h2>
                 <small className="text-muted">Rental price per hour</small>
               </div>
 
@@ -211,9 +229,10 @@ const DroneDetail = () => {
               <div className="mb-4">
                 <h5>About this Drone</h5>
                 <p className="text-muted">
-                  The {drone.brand} {drone.model} is a professional-grade drone featuring advanced capabilities, 
-                  extended battery life, and high-quality imaging. Perfect for aerial photography, videography, 
-                  and commercial applications.
+                  The {drone.brand} {drone.model} is a professional-grade drone
+                  featuring advanced capabilities, extended battery life, and
+                  high-quality imaging. Perfect for aerial photography,
+                  videography, and commercial applications.
                 </p>
               </div>
 
@@ -247,7 +266,7 @@ const DroneDetail = () => {
               {/* Quantity Selector */}
               <div className="mb-4">
                 <label className="form-label fw-bold">Quantity</label>
-                <div className="input-group" style={{ width: '150px' }}>
+                <div className="input-group" style={{ width: "150px" }}>
                   <button
                     type="button"
                     className="btn btn-outline-secondary"
@@ -259,7 +278,9 @@ const DroneDetail = () => {
                     type="number"
                     className="form-control text-center"
                     value={quantity}
-                    onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                    onChange={(e) =>
+                      setQuantity(Math.max(1, parseInt(e.target.value) || 1))
+                    }
                     min="1"
                   />
                   <button
@@ -274,13 +295,14 @@ const DroneDetail = () => {
 
               {/* Action Buttons */}
               <div className="d-grid gap-2">
-                {drone.status === 'available' ? (
+                {drone.status === "AVAILABLE" ? (
                   <button
                     className="btn btn-primary-custom btn-lg"
                     onClick={handleBookNow}
                   >
                     <i className="fas fa-calendar-plus me-2"></i>
-                    Book Now - ${(drone.pricePerHour * quantity).toFixed(2)}/hour
+                    Book Now - ${(drone.pricePerHour * quantity).toFixed(2)}
+                    /hour
                   </button>
                 ) : (
                   <button className="btn btn-secondary btn-lg" disabled>
@@ -289,9 +311,9 @@ const DroneDetail = () => {
                   </button>
                 )}
                 {drone.guideUrl && (
-                  <a 
-                    href={drone.guideUrl} 
-                    target="_blank" 
+                  <a
+                    href={drone.guideUrl}
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="btn btn-outline-info"
                   >
@@ -347,7 +369,9 @@ const DroneDetail = () => {
                   <div className="col-md-6 col-lg-4 mb-3">
                     <div className="d-flex justify-content-between">
                       <span className="fw-bold">Battery Life:</span>
-                      <span className="text-muted">{drone.batteryLife} minutes</span>
+                      <span className="text-muted">
+                        {drone.batteryLife} minutes
+                      </span>
                     </div>
                   </div>
                   <div className="col-md-6 col-lg-4 mb-3">
@@ -371,11 +395,15 @@ const DroneDetail = () => {
                   <i className="fas fa-star me-2"></i>
                   Customer Reviews
                 </h4>
-                <span className="badge bg-primary">{ratings.length} reviews</span>
+                <span className="badge bg-primary">
+                  {ratings.length} reviews
+                </span>
               </div>
               <div className="card-body">
                 {ratings.length === 0 ? (
-                  <p className="text-muted text-center">No reviews yet. Be the first to review this drone!</p>
+                  <p className="text-muted text-center">
+                    No reviews yet. Be the first to review this drone!
+                  </p>
                 ) : (
                   <div className="row">
                     {ratings.map((rating) => (
@@ -386,7 +414,9 @@ const DroneDetail = () => {
                               <h6 className="mb-1">{rating.user.name}</h6>
                               <div className="mb-2">
                                 {renderStars(rating.rating)}
-                                <span className="ms-2 text-muted">({rating.rating}/5)</span>
+                                <span className="ms-2 text-muted">
+                                  ({rating.rating}/5)
+                                </span>
                               </div>
                             </div>
                             <small className="text-muted">
@@ -419,10 +449,15 @@ const DroneDetail = () => {
                   />
                   <div className="card-body">
                     <h5 className="card-title">DJI Air 2S</h5>
-                    <p className="card-text text-muted">Compact drone perfect for aerial photography</p>
+                    <p className="card-text text-muted">
+                      Compact drone perfect for aerial photography
+                    </p>
                     <div className="d-flex justify-content-between align-items-center">
                       <span className="fw-bold text-primary">$18/hour</span>
-                      <Link to="/drones/2" className="btn btn-primary-custom btn-sm">
+                      <Link
+                        to="/drones/2"
+                        className="btn btn-primary-custom btn-sm"
+                      >
                         View Details
                       </Link>
                     </div>
@@ -437,4 +472,4 @@ const DroneDetail = () => {
   );
 };
 
-export default DroneDetail; 
+export default DroneDetail;

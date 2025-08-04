@@ -12,31 +12,30 @@ const Register = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const initialValues = {
-    firstName: '',
-    lastName: '',
+    name: '',
     email: '',
     phone: '',
+    address: '',
     password: '',
     confirmPassword: '',
-    acceptTerms: false,
-    marketingEmails: false
+    acceptTerms: false
   };
 
   const validationSchema = Yup.object({
-    firstName: Yup.string()
-      .min(2, 'First name must be at least 2 characters')
-      .max(50, 'First name must be less than 50 characters')
-      .required('First name is required'),
-    lastName: Yup.string()
-      .min(2, 'Last name must be at least 2 characters')
-      .max(50, 'Last name must be less than 50 characters')
-      .required('Last name is required'),
+    name: Yup.string()
+      .min(2, 'Name must be at least 2 characters')
+      .max(100, 'Name must be less than 100 characters')
+      .required('Name is required'),
     email: Yup.string()
       .email('Invalid email address')
       .required('Email is required'),
     phone: Yup.string()
       .matches(/^[\+]?[1-9][\d]{0,15}$/, 'Invalid phone number')
       .required('Phone number is required'),
+    address: Yup.string()
+      .min(10, 'Address must be at least 10 characters')
+      .max(500, 'Address must be less than 500 characters')
+      .required('Address is required'),
     password: Yup.string()
       .min(8, 'Password must be at least 8 characters')
       .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Password must contain at least one uppercase letter, one lowercase letter, and one number')
@@ -52,12 +51,11 @@ const Register = () => {
     setIsLoading(true);
     try {
       const userData = {
-        firstName: values.firstName,
-        lastName: values.lastName,
+        name: values.name,
         email: values.email,
         phone: values.phone,
-        password: values.password,
-        marketingEmails: values.marketingEmails
+        address: values.address,
+        password: values.password
       };
 
       const success = await register(userData);
@@ -97,40 +95,22 @@ const Register = () => {
                 >
                   {({ isSubmitting, errors, touched, values }) => (
                     <Form>
-                      {/* Name Fields */}
-                      <div className="row mb-3">
-                        <div className="col-md-6">
-                          <label htmlFor="firstName" className="form-label fw-bold">
-                            <i className="fas fa-user me-2"></i>
-                            First Name
-                          </label>
-                          <Field
-                            type="text"
-                            id="firstName"
-                            name="firstName"
-                            className={`form-control ${
-                              errors.firstName && touched.firstName ? 'is-invalid' : ''
-                            }`}
-                            placeholder="Enter first name"
-                          />
-                          <ErrorMessage name="firstName" component="div" className="invalid-feedback" />
-                        </div>
-                        <div className="col-md-6">
-                          <label htmlFor="lastName" className="form-label fw-bold">
-                            <i className="fas fa-user me-2"></i>
-                            Last Name
-                          </label>
-                          <Field
-                            type="text"
-                            id="lastName"
-                            name="lastName"
-                            className={`form-control ${
-                              errors.lastName && touched.lastName ? 'is-invalid' : ''
-                            }`}
-                            placeholder="Enter last name"
-                          />
-                          <ErrorMessage name="lastName" component="div" className="invalid-feedback" />
-                        </div>
+                      {/* Name Field */}
+                      <div className="mb-3">
+                        <label htmlFor="name" className="form-label fw-bold">
+                          <i className="fas fa-user me-2"></i>
+                          Full Name
+                        </label>
+                        <Field
+                          type="text"
+                          id="name"
+                          name="name"
+                          className={`form-control ${
+                            errors.name && touched.name ? 'is-invalid' : ''
+                          }`}
+                          placeholder="Enter your full name"
+                        />
+                        <ErrorMessage name="name" component="div" className="invalid-feedback" />
                       </div>
 
                       {/* Email Field */}
@@ -167,6 +147,25 @@ const Register = () => {
                           placeholder="Enter phone number"
                         />
                         <ErrorMessage name="phone" component="div" className="invalid-feedback" />
+                      </div>
+
+                      {/* Address Field */}
+                      <div className="mb-3">
+                        <label htmlFor="address" className="form-label fw-bold">
+                          <i className="fas fa-map-marker-alt me-2"></i>
+                          Address
+                        </label>
+                        <Field
+                          as="textarea"
+                          id="address"
+                          name="address"
+                          rows="3"
+                          className={`form-control ${
+                            errors.address && touched.address ? 'is-invalid' : ''
+                          }`}
+                          placeholder="Enter your complete address"
+                        />
+                        <ErrorMessage name="address" component="div" className="invalid-feedback" />
                       </div>
 
                       {/* Password Fields */}
@@ -259,17 +258,7 @@ const Register = () => {
                           </label>
                           <ErrorMessage name="acceptTerms" component="div" className="invalid-feedback" />
                         </div>
-                        <div className="form-check">
-                          <Field
-                            type="checkbox"
-                            id="marketingEmails"
-                            name="marketingEmails"
-                            className="form-check-input"
-                          />
-                          <label className="form-check-label" htmlFor="marketingEmails">
-                            I would like to receive marketing emails about new drones and special offers
-                          </label>
-                        </div>
+
                       </div>
 
                       {/* Submit Button */}

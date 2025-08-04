@@ -92,7 +92,8 @@ export const AuthProvider = ({ children }) => {
       // Set auth token header
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       
-      const response = await api.get('/api/users/me');
+      // Try to get user profile
+      const response = await api.get('/api/users/profile');
       dispatch({
         type: AUTH_ACTIONS.USER_LOADED,
         payload: response.data
@@ -110,6 +111,9 @@ export const AuthProvider = ({ children }) => {
         email,
         password
       });
+
+      // Set auth token header for future requests
+      api.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
 
       dispatch({
         type: AUTH_ACTIONS.LOGIN_SUCCESS,
@@ -129,14 +133,9 @@ export const AuthProvider = ({ children }) => {
   // Register user
   const register = async (userData) => {
     try {
-      const response = await api.post('/api/auth/register', userData);
+      const response = await api.post('/api/users/auth/register', userData);
 
-      dispatch({
-        type: AUTH_ACTIONS.REGISTER_SUCCESS,
-        payload: response.data
-      });
-
-      toast.success('Registration successful!');
+      toast.success('Registration successful! Please login.');
       return true;
     } catch (error) {
       const message = error.response?.data?.message || 'Registration failed';
@@ -177,7 +176,6 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Custom hook to use auth context
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

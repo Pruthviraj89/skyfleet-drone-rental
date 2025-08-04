@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { useAuth } from '../../context/AuthContext';
-import { useBooking } from '../../context/BookingContext';
-import { droneAPI, undertakingAPI } from '../../services/api';
-import { toast } from 'react-toastify';
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { useAuth } from "../../context/AuthContext";
+import { useBooking } from "../../context/BookingContext";
+import { droneAPI } from "../../services/api";
+import { toast } from "react-toastify";
 
 const BookingForm = () => {
   const { droneId } = useParams();
@@ -21,7 +21,7 @@ const BookingForm = () => {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate('/login', { state: { from: { pathname: `/book/${droneId}` } } });
+      navigate("/login", { state: { from: { pathname: `/book/${droneId}` } } });
       return;
     }
     fetchDroneDetails();
@@ -39,9 +39,9 @@ const BookingForm = () => {
       const response = await droneAPI.getById(droneId);
       setDrone(response.data);
     } catch (error) {
-      console.error('Error fetching drone details:', error);
-      toast.error('Failed to load drone details');
-      navigate('/drones');
+      console.error("Error fetching drone details:", error);
+      toast.error("Failed to load drone details");
+      navigate("/drones");
     } finally {
       setLoading(false);
     }
@@ -49,79 +49,85 @@ const BookingForm = () => {
 
   const validationSchema = Yup.object({
     startTime: Yup.date()
-      .min(new Date(), 'Start time must be in the future')
-      .required('Start time is required'),
+      .min(new Date(), "Start time must be in the future")
+      .required("Start time is required"),
     endTime: Yup.date()
-      .min(Yup.ref('startTime'), 'End time must be after start time')
-      .required('End time is required'),
+      .min(Yup.ref("startTime"), "End time must be after start time")
+      .required("End time is required"),
     pickupLocation: Yup.string()
-      .min(10, 'Pickup location must be at least 10 characters')
-      .required('Pickup location is required'),
-    specialInstructions: Yup.string()
-      .max(500, 'Special instructions must be less than 500 characters'),
+      .min(10, "Pickup location must be at least 10 characters")
+      .required("Pickup location is required"),
+    specialInstructions: Yup.string().max(
+      500,
+      "Special instructions must be less than 500 characters"
+    ),
     emergencyContact: Yup.object({
-      name: Yup.string().required('Emergency contact name is required'),
+      name: Yup.string().required("Emergency contact name is required"),
       phone: Yup.string()
-        .matches(/^[0-9+\-\s()]+$/, 'Invalid phone number format')
-        .required('Emergency contact phone is required')
-    })
+        .matches(/^[0-9+\-\s()]+$/, "Invalid phone number format")
+        .required("Emergency contact phone is required"),
+    }),
   });
 
   const formik = useFormik({
     initialValues: {
-      startTime: '',
-      endTime: '',
-      pickupLocation: '',
-      specialInstructions: '',
+      startTime: "",
+      endTime: "",
+      pickupLocation: "",
+      specialInstructions: "",
       emergencyContact: {
-        name: '',
-        phone: ''
-      }
+        name: "",
+        phone: "",
+      },
     },
     validationSchema,
     onSubmit: async (values) => {
       if (!undertakingAccepted) {
-        toast.error('You must accept the undertaking agreement to proceed');
+        toast.error("You must accept the undertaking agreement to proceed");
         return;
       }
 
       try {
         setSubmitting(true);
-        
+
         const bookingData = {
+          userId: user?.id, // ✅ Pass logged-in user ID directly
           droneId: parseInt(droneId),
           startTime: values.startTime,
           endTime: values.endTime,
           totalAmount: totalAmount,
           pickupLocation: values.pickupLocation,
           specialInstructions: values.specialInstructions,
-          emergencyContact: values.emergencyContact
+          emergencyContact: values.emergencyContact,
+          undertakingAccepted: undertakingAccepted,
         };
 
         const response = await createBooking(bookingData);
-        
-        if (response.success) {
-          toast.success('Booking created successfully!');
-          navigate('/my-bookings');
+
+        if (response && response.success) {
+          toast.success("Booking created successfully!");
+          navigate("/my-bookings");
+        } else {
+          toast.error(response?.message || "Failed to create booking");
         }
       } catch (error) {
-        console.error('Error creating booking:', error);
-        toast.error('Failed to create booking. Please try again.');
+        console.error("Error creating booking:", error);
+        toast.error("Failed to create booking. Please try again.");
       } finally {
         setSubmitting(false);
       }
-    }
+    },
   });
 
   const handleDateChange = (field, value) => {
     formik.setFieldValue(field, value);
-    
-    if (field === 'startTime' && formik.values.endTime) {
+
+    if (field === "startTime" && formik.values.endTime) {
       const start = new Date(value);
       const end = new Date(formik.values.endTime);
       const diffHours = Math.ceil((end - start) / (1000 * 60 * 60));
       setTotalHours(Math.max(1, diffHours));
-    } else if (field === 'endTime' && formik.values.startTime) {
+    } else if (field === "endTime" && formik.values.startTime) {
       const start = new Date(formik.values.startTime);
       const end = new Date(value);
       const diffHours = Math.ceil((end - start) / (1000 * 60 * 60));
@@ -150,7 +156,10 @@ const BookingForm = () => {
           <div className="text-center">
             <h2>Drone not found</h2>
             <p>The drone you're trying to book doesn't exist.</p>
-            <button className="btn btn-primary-custom" onClick={() => navigate('/drones')}>
+            <button
+              className="btn btn-primary-custom"
+              onClick={() => navigate("/drones")}
+            >
               Back to Drones
             </button>
           </div>
@@ -182,14 +191,22 @@ const BookingForm = () => {
                       </label>
                       <input
                         type="datetime-local"
-                        className={`form-control ${formik.touched.startTime && formik.errors.startTime ? 'is-invalid' : ''}`}
+                        className={`form-control ${
+                          formik.touched.startTime && formik.errors.startTime
+                            ? "is-invalid"
+                            : ""
+                        }`}
                         name="startTime"
                         value={formik.values.startTime}
-                        onChange={(e) => handleDateChange('startTime', e.target.value)}
+                        onChange={(e) =>
+                          handleDateChange("startTime", e.target.value)
+                        }
                         min={new Date().toISOString().slice(0, 16)}
                       />
                       {formik.touched.startTime && formik.errors.startTime && (
-                        <div className="invalid-feedback">{formik.errors.startTime}</div>
+                        <div className="invalid-feedback">
+                          {formik.errors.startTime}
+                        </div>
                       )}
                     </div>
                     <div className="col-md-6">
@@ -199,14 +216,25 @@ const BookingForm = () => {
                       </label>
                       <input
                         type="datetime-local"
-                        className={`form-control ${formik.touched.endTime && formik.errors.endTime ? 'is-invalid' : ''}`}
+                        className={`form-control ${
+                          formik.touched.endTime && formik.errors.endTime
+                            ? "is-invalid"
+                            : ""
+                        }`}
                         name="endTime"
                         value={formik.values.endTime}
-                        onChange={(e) => handleDateChange('endTime', e.target.value)}
-                        min={formik.values.startTime || new Date().toISOString().slice(0, 16)}
+                        onChange={(e) =>
+                          handleDateChange("endTime", e.target.value)
+                        }
+                        min={
+                          formik.values.startTime ||
+                          new Date().toISOString().slice(0, 16)
+                        }
                       />
                       {formik.touched.endTime && formik.errors.endTime && (
-                        <div className="invalid-feedback">{formik.errors.endTime}</div>
+                        <div className="invalid-feedback">
+                          {formik.errors.endTime}
+                        </div>
                       )}
                     </div>
                   </div>
@@ -220,7 +248,11 @@ const BookingForm = () => {
                           type="number"
                           className="form-control"
                           value={totalHours}
-                          onChange={(e) => setTotalHours(Math.max(1, parseInt(e.target.value) || 1))}
+                          onChange={(e) =>
+                            setTotalHours(
+                              Math.max(1, parseInt(e.target.value) || 1)
+                            )
+                          }
                           min="1"
                         />
                         <span className="input-group-text">hours</span>
@@ -241,7 +273,12 @@ const BookingForm = () => {
                       Pickup Location
                     </label>
                     <textarea
-                      className={`form-control ${formik.touched.pickupLocation && formik.errors.pickupLocation ? 'is-invalid' : ''}`}
+                      className={`form-control ${
+                        formik.touched.pickupLocation &&
+                        formik.errors.pickupLocation
+                          ? "is-invalid"
+                          : ""
+                      }`}
                       name="pickupLocation"
                       rows="3"
                       placeholder="Enter detailed pickup location..."
@@ -249,9 +286,12 @@ const BookingForm = () => {
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                     />
-                    {formik.touched.pickupLocation && formik.errors.pickupLocation && (
-                      <div className="invalid-feedback">{formik.errors.pickupLocation}</div>
-                    )}
+                    {formik.touched.pickupLocation &&
+                      formik.errors.pickupLocation && (
+                        <div className="invalid-feedback">
+                          {formik.errors.pickupLocation}
+                        </div>
+                      )}
                   </div>
 
                   {/* Emergency Contact */}
@@ -265,31 +305,47 @@ const BookingForm = () => {
                         <label className="form-label">Contact Name</label>
                         <input
                           type="text"
-                          className={`form-control ${formik.touched.emergencyContact?.name && formik.errors.emergencyContact?.name ? 'is-invalid' : ''}`}
+                          className={`form-control ${
+                            formik.touched.emergencyContact?.name &&
+                            formik.errors.emergencyContact?.name
+                              ? "is-invalid"
+                              : ""
+                          }`}
                           name="emergencyContact.name"
                           placeholder="Full name"
                           value={formik.values.emergencyContact.name}
                           onChange={formik.handleChange}
                           onBlur={formik.handleBlur}
                         />
-                        {formik.touched.emergencyContact?.name && formik.errors.emergencyContact?.name && (
-                          <div className="invalid-feedback">{formik.errors.emergencyContact.name}</div>
-                        )}
+                        {formik.touched.emergencyContact?.name &&
+                          formik.errors.emergencyContact?.name && (
+                            <div className="invalid-feedback">
+                              {formik.errors.emergencyContact.name}
+                            </div>
+                          )}
                       </div>
                       <div className="col-md-6">
                         <label className="form-label">Contact Phone</label>
                         <input
                           type="tel"
-                          className={`form-control ${formik.touched.emergencyContact?.phone && formik.errors.emergencyContact?.phone ? 'is-invalid' : ''}`}
+                          className={`form-control ${
+                            formik.touched.emergencyContact?.phone &&
+                            formik.errors.emergencyContact?.phone
+                              ? "is-invalid"
+                              : ""
+                          }`}
                           name="emergencyContact.phone"
                           placeholder="Phone number"
                           value={formik.values.emergencyContact.phone}
                           onChange={formik.handleChange}
                           onBlur={formik.handleBlur}
                         />
-                        {formik.touched.emergencyContact?.phone && formik.errors.emergencyContact?.phone && (
-                          <div className="invalid-feedback">{formik.errors.emergencyContact.phone}</div>
-                        )}
+                        {formik.touched.emergencyContact?.phone &&
+                          formik.errors.emergencyContact?.phone && (
+                            <div className="invalid-feedback">
+                              {formik.errors.emergencyContact.phone}
+                            </div>
+                          )}
                       </div>
                     </div>
                   </div>
@@ -301,7 +357,12 @@ const BookingForm = () => {
                       Special Instructions (Optional)
                     </label>
                     <textarea
-                      className={`form-control ${formik.touched.specialInstructions && formik.errors.specialInstructions ? 'is-invalid' : ''}`}
+                      className={`form-control ${
+                        formik.touched.specialInstructions &&
+                        formik.errors.specialInstructions
+                          ? "is-invalid"
+                          : ""
+                      }`}
                       name="specialInstructions"
                       rows="3"
                       placeholder="Any special requirements or instructions..."
@@ -309,9 +370,12 @@ const BookingForm = () => {
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                     />
-                    {formik.touched.specialInstructions && formik.errors.specialInstructions && (
-                      <div className="invalid-feedback">{formik.errors.specialInstructions}</div>
-                    )}
+                    {formik.touched.specialInstructions &&
+                      formik.errors.specialInstructions && (
+                        <div className="invalid-feedback">
+                          {formik.errors.specialInstructions}
+                        </div>
+                      )}
                   </div>
 
                   {/* Undertaking Agreement */}
@@ -330,21 +394,30 @@ const BookingForm = () => {
                             type="checkbox"
                             id="undertakingAccepted"
                             checked={undertakingAccepted}
-                            onChange={(e) => setUndertakingAccepted(e.target.checked)}
+                            onChange={(e) =>
+                              setUndertakingAccepted(e.target.checked)
+                            }
                           />
-                          <label className="form-check-label" htmlFor="undertakingAccepted">
-                            I accept the undertaking agreement and understand my responsibilities
+                          <label
+                            className="form-check-label"
+                            htmlFor="undertakingAccepted"
+                          >
+                            I accept the undertaking agreement and understand my
+                            responsibilities
                           </label>
                         </div>
                         <div className="mt-3">
                           <small className="text-muted">
-                            By accepting this agreement, you acknowledge that you are responsible for:
+                            By accepting this agreement, you acknowledge that
+                            you are responsible for:
                           </small>
                           <ul className="mt-2 mb-0">
                             <li>Safe operation of the drone</li>
                             <li>Returning the drone in the same condition</li>
                             <li>Following all local regulations and laws</li>
-                            <li>Paying for any damages or penalties incurred</li>
+                            <li>
+                              Paying for any damages or penalties incurred
+                            </li>
                           </ul>
                         </div>
                       </div>
@@ -360,7 +433,11 @@ const BookingForm = () => {
                     >
                       {submitting ? (
                         <>
-                          <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                          <span
+                            className="spinner-border spinner-border-sm me-2"
+                            role="status"
+                            aria-hidden="true"
+                          ></span>
                           Creating Booking...
                         </>
                       ) : (
@@ -389,13 +466,19 @@ const BookingForm = () => {
                 {/* Drone Info */}
                 <div className="d-flex align-items-center mb-3">
                   <img
-                    src={drone.imageUrl || '/assets/img/droneimg1.jpeg'}
+                    src={drone.imageUrl || "/assets/img/droneimg1.jpeg"}
                     alt={drone.model}
                     className="rounded me-3"
-                    style={{ width: '60px', height: '60px', objectFit: 'cover' }}
+                    style={{
+                      width: "60px",
+                      height: "60px",
+                      objectFit: "cover",
+                    }}
                   />
                   <div>
-                    <h6 className="mb-0">{drone.brand} {drone.model}</h6>
+                    <h6 className="mb-0">
+                      {drone.brand} {drone.model}
+                    </h6>
                     <small className="text-muted">{drone.location}</small>
                   </div>
                 </div>
@@ -408,7 +491,9 @@ const BookingForm = () => {
                   </div>
                   <div className="d-flex justify-content-between mb-2">
                     <span>Duration:</span>
-                    <span>{totalHours} hour{totalHours > 1 ? 's' : ''}</span>
+                    <span>
+                      {totalHours} hour{totalHours > 1 ? "s" : ""}
+                    </span>
                   </div>
                   <div className="d-flex justify-content-between mb-2">
                     <span>Subtotal:</span>
@@ -459,4 +544,4 @@ const BookingForm = () => {
   );
 };
 
-export default BookingForm; 
+export default BookingForm;
