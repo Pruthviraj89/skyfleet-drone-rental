@@ -1,23 +1,25 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import { useAuth } from "../../context/AuthContext";
-import { useBooking } from "../../context/BookingContext";
-import { droneAPI } from "../../services/api";
-import { toast } from "react-toastify";
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { useAuth } from '../../context/AuthContext';
+import { useBooking } from '../../context/BookingContext';
+import { droneAPI, userAPI ,undertakingAPI} from '../../services/api';
+import { toast } from 'react-toastify';
 
 const BookingForm = () => {
   const { droneId } = useParams();
   const navigate = useNavigate();
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated } = useAuth();
   const { createBooking } = useBooking();
   const [drone, setDrone] = useState(null);
+  const [user,setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [totalHours, setTotalHours] = useState(1);
   const [totalAmount, setTotalAmount] = useState(0);
   const [undertakingAccepted, setUndertakingAccepted] = useState(false);
+  const [undertaking, setUndertaking] = useState(null);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -37,7 +39,14 @@ const BookingForm = () => {
     try {
       setLoading(true);
       const response = await droneAPI.getById(droneId);
+      const userResponse = await userAPI.getCurrentUser();
+      const undertakingResponse = await undertakingAPI.getAllUndertakings();
+      setUndertaking(undertakingResponse.data[0]);
+      console.log(userResponse.data);
+      console.log(undertakingResponse.data[0].damageClauseText);
+      setUser(userResponse.data);
       setDrone(response.data);
+      console.log(response.data);
     } catch (error) {
       console.error("Error fetching drone details:", error);
       toast.error("Failed to load drone details");
@@ -55,30 +64,17 @@ const BookingForm = () => {
       .min(Yup.ref("startTime"), "End time must be after start time")
       .required("End time is required"),
     pickupLocation: Yup.string()
-      .min(10, "Pickup location must be at least 10 characters")
-      .required("Pickup location is required"),
-    specialInstructions: Yup.string().max(
-      500,
-      "Special instructions must be less than 500 characters"
-    ),
-    emergencyContact: Yup.object({
-      name: Yup.string().required("Emergency contact name is required"),
-      phone: Yup.string()
-        .matches(/^[0-9+\-\s()]+$/, "Invalid phone number format")
-        .required("Emergency contact phone is required"),
-    }),
+      .min(10, 'Pickup location must be at least 10 characters')
+      .required('Pickup location is required')
   });
+  
 
   const formik = useFormik({
     initialValues: {
-      startTime: "",
-      endTime: "",
-      pickupLocation: "",
-      specialInstructions: "",
-      emergencyContact: {
-        name: "",
-        phone: "",
-      },
+      startTime: '',
+      endTime: '',
+      pickupLocation: ''
+      
     },
     validationSchema,
     onSubmit: async (values) => {
@@ -91,15 +87,14 @@ const BookingForm = () => {
         setSubmitting(true);
 
         const bookingData = {
-          userId: user?.id, // ✅ Pass logged-in user ID directly
+          userId: user.id,
           droneId: parseInt(droneId),
           startTime: values.startTime,
           endTime: values.endTime,
-          totalAmount: totalAmount,
-          pickupLocation: values.pickupLocation,
-          specialInstructions: values.specialInstructions,
-          emergencyContact: values.emergencyContact,
-          undertakingAccepted: undertakingAccepted,
+          status: 'PENDING',
+          deliverStatus: 'PENDING',
+          undertakingIsAccepted: true,
+          address: values.pickupLocation
         };
 
         const response = await createBooking(bookingData);
@@ -266,11 +261,11 @@ const BookingForm = () => {
                     </div>
                   </div>
 
-                  {/* Pickup Location */}
+                  {/* Delivery Location */}
                   <div className="mb-4">
                     <label className="form-label fw-bold">
                       <i className="fas fa-map-marker-alt me-1"></i>
-                      Pickup Location
+                      Delivery Location
                     </label>
                     <textarea
                       className={`form-control ${
@@ -281,7 +276,7 @@ const BookingForm = () => {
                       }`}
                       name="pickupLocation"
                       rows="3"
-                      placeholder="Enter detailed pickup location..."
+                      placeholder="Enter detailed delivery location..."
                       value={formik.values.pickupLocation}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
@@ -294,89 +289,9 @@ const BookingForm = () => {
                       )}
                   </div>
 
-                  {/* Emergency Contact */}
-                  <div className="mb-4">
-                    <h5 className="mb-3">
-                      <i className="fas fa-phone me-1"></i>
-                      Emergency Contact
-                    </h5>
-                    <div className="row">
-                      <div className="col-md-6">
-                        <label className="form-label">Contact Name</label>
-                        <input
-                          type="text"
-                          className={`form-control ${
-                            formik.touched.emergencyContact?.name &&
-                            formik.errors.emergencyContact?.name
-                              ? "is-invalid"
-                              : ""
-                          }`}
-                          name="emergencyContact.name"
-                          placeholder="Full name"
-                          value={formik.values.emergencyContact.name}
-                          onChange={formik.handleChange}
-                          onBlur={formik.handleBlur}
-                        />
-                        {formik.touched.emergencyContact?.name &&
-                          formik.errors.emergencyContact?.name && (
-                            <div className="invalid-feedback">
-                              {formik.errors.emergencyContact.name}
-                            </div>
-                          )}
-                      </div>
-                      <div className="col-md-6">
-                        <label className="form-label">Contact Phone</label>
-                        <input
-                          type="tel"
-                          className={`form-control ${
-                            formik.touched.emergencyContact?.phone &&
-                            formik.errors.emergencyContact?.phone
-                              ? "is-invalid"
-                              : ""
-                          }`}
-                          name="emergencyContact.phone"
-                          placeholder="Phone number"
-                          value={formik.values.emergencyContact.phone}
-                          onChange={formik.handleChange}
-                          onBlur={formik.handleBlur}
-                        />
-                        {formik.touched.emergencyContact?.phone &&
-                          formik.errors.emergencyContact?.phone && (
-                            <div className="invalid-feedback">
-                              {formik.errors.emergencyContact.phone}
-                            </div>
-                          )}
-                      </div>
-                    </div>
-                  </div>
+              
 
-                  {/* Special Instructions */}
-                  <div className="mb-4">
-                    <label className="form-label fw-bold">
-                      <i className="fas fa-sticky-note me-1"></i>
-                      Special Instructions (Optional)
-                    </label>
-                    <textarea
-                      className={`form-control ${
-                        formik.touched.specialInstructions &&
-                        formik.errors.specialInstructions
-                          ? "is-invalid"
-                          : ""
-                      }`}
-                      name="specialInstructions"
-                      rows="3"
-                      placeholder="Any special requirements or instructions..."
-                      value={formik.values.specialInstructions}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                    />
-                    {formik.touched.specialInstructions &&
-                      formik.errors.specialInstructions && (
-                        <div className="invalid-feedback">
-                          {formik.errors.specialInstructions}
-                        </div>
-                      )}
-                  </div>
+                 
 
                   {/* Undertaking Agreement */}
                   <div className="mb-4">
@@ -408,16 +323,13 @@ const BookingForm = () => {
                         </div>
                         <div className="mt-3">
                           <small className="text-muted">
-                            By accepting this agreement, you acknowledge that
-                            you are responsible for:
+                            By accepting this agreement:
                           </small>
                           <ul className="mt-2 mb-0">
-                            <li>Safe operation of the drone</li>
-                            <li>Returning the drone in the same condition</li>
-                            <li>Following all local regulations and laws</li>
-                            <li>
-                              Paying for any damages or penalties incurred
-                            </li>
+                          <li>
+  {undertaking.damageClauseText }
+</li>
+
                           </ul>
                         </div>
                       </div>

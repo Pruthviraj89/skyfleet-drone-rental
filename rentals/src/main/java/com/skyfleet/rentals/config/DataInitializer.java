@@ -1,21 +1,26 @@
 package com.skyfleet.rentals.config;
 
 import com.skyfleet.rentals.entity.Role;
+import com.skyfleet.rentals.entity.Undertaking;
 import com.skyfleet.rentals.entity.User;
+import com.skyfleet.rentals.repository.UndertakingRepository;
 import com.skyfleet.rentals.repository.UserRepository;
+
+import lombok.AllArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
+@AllArgsConstructor
 public class DataInitializer implements CommandLineRunner {
 
-    @Autowired
     private UserRepository userRepository;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
+    
+    private UndertakingRepository undertakingRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -44,5 +49,15 @@ public class DataInitializer implements CommandLineRunner {
             userRepository.save(testUser);
             System.out.println("Test user created: user@test.com / user123");
         }
+        
+        if(undertakingRepository.count()==0) {
+        	Undertaking entity= new Undertaking();
+        	entity.setDamageClauseText("I agree to pay for any damage caused to the drone during the rental period.");
+        	entity.setUniquetext(true);
+        	undertakingRepository.save(entity);
+        	
+        }
+        
+        
     }
 } 

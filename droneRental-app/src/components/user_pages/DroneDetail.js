@@ -28,9 +28,9 @@ const DroneDetail = () => {
       // Use mock data for demo
       setDrone({
         id: parseInt(id),
-        model: "Mavic 3 Pro",
-        brand: "DJI",
-        status: "AVAILABLE",
+        model: 'Mavic 3 Pro',
+        brand: 'DJI',
+        status: 'AVAILABLE',
         pricePerHour: 25.0,
         batteryLife: 46,
         location: "Main Office",
@@ -90,21 +90,9 @@ const DroneDetail = () => {
 
   const getStatusBadge = (status) => {
     const statusConfig = {
-      AVAILABLE: {
-        class: "bg-success",
-        icon: "fa-check",
-        text: "Available for Rent",
-      },
-      BOOKED: {
-        class: "bg-warning",
-        icon: "fa-clock",
-        text: "Currently Booked",
-      },
-      MAINTENANCE: {
-        class: "bg-danger",
-        icon: "fa-tools",
-        text: "Under Maintenance",
-      },
+      'AVAILABLE': { class: 'bg-success', icon: 'fa-check', text: 'Available for Rent' },
+      'BOOKED': { class: 'bg-warning', icon: 'fa-clock', text: 'Currently Booked' },
+      'MAINTENANCE': { class: 'bg-danger', icon: 'fa-tools', text: 'Under Maintenance' }
     };
 
     const config = statusConfig[status] || {
@@ -263,39 +251,11 @@ const DroneDetail = () => {
                 </ul>
               </div>
 
-              {/* Quantity Selector */}
-              <div className="mb-4">
-                <label className="form-label fw-bold">Quantity</label>
-                <div className="input-group" style={{ width: "150px" }}>
-                  <button
-                    type="button"
-                    className="btn btn-outline-secondary"
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  >
-                    <i className="fas fa-minus"></i>
-                  </button>
-                  <input
-                    type="number"
-                    className="form-control text-center"
-                    value={quantity}
-                    onChange={(e) =>
-                      setQuantity(Math.max(1, parseInt(e.target.value) || 1))
-                    }
-                    min="1"
-                  />
-                  <button
-                    type="button"
-                    className="btn btn-outline-secondary"
-                    onClick={() => setQuantity(quantity + 1)}
-                  >
-                    <i className="fas fa-plus"></i>
-                  </button>
-                </div>
-              </div>
+              
 
               {/* Action Buttons */}
               <div className="d-grid gap-2">
-                {drone.status === "AVAILABLE" ? (
+                {drone.status === 'AVAILABLE' ? (
                   <button
                     className="btn btn-primary-custom btn-lg"
                     onClick={handleBookNow}

@@ -14,4 +14,9 @@ public interface UserService extends UserDetailsService {
     void deleteUser(Long id);
     UserResponseDTO getUserByEmail(UserLoginDTO user);
     UserResponseDTO authenticateUser(UserLoginDTO loginDTO);
+    
+    
+    UserResponseDTO getUserByEmailAfterTokenVerification(String email);
+    UserResponseDTO updateUser(User user);
+    
 }

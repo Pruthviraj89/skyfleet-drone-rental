@@ -39,7 +39,7 @@ public class PenaltyServiceImpl implements PenaltyService {
     
     
     private static final double LATE_FEE_RATE = 1.5; // 1.5x hourly rate
-    private static final double DAMAGE_FIXED_AMOUNT = 300.0; // $50 for damage
+    private static final double DAMAGE_FIXED_AMOUNT = 300.0; // 50 for damage
     private static final double CANCELLATION_FEE_RATE = 0.2;// 20% of total amount
     
     

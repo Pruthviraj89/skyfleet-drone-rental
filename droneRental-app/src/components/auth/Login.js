@@ -33,6 +33,7 @@ const Login = () => {
       const success = await login(values.email, values.password);
       if (success) {
         navigate(from, { replace: true });
+        console.log(navigate);
       }
     } catch (error) {
       if (error.response?.data?.errors) {

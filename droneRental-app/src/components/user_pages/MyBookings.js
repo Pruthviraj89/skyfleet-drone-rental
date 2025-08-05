@@ -7,12 +7,14 @@ import PaymentModal from './PaymentModal';
 import PenaltyModal from './PenaltyModal';
 import RatingModal from './RatingModal';
 import UndertakingModal from './UndertakingModal';
+import {  bookingAPI } from '../../services/api';
+import {jwtDecode} from 'jwt-decode';
 
 const MyBookings = () => {
   const { user } = useAuth();
   const { bookings, getBookings, deleteBooking } = useBooking();
   const [loading, setLoading] = useState(true);
-  const [selectedStatus, setSelectedStatus] = useState('All');
+  const [selectedStatus, setSelectedStatus] = useState('ALL');
   const [searchTerm, setSearchTerm] = useState('');
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
@@ -25,7 +27,11 @@ const MyBookings = () => {
   const [selectedUndertaking, setSelectedUndertaking] = useState(null);
   const [selectedUndertakingBooking, setSelectedUndertakingBooking] = useState(null);
 
-  const statuses = ['All', 'confirmed', 'in-progress', 'completed', 'cancelled'];
+  const[allBookings,setAllBookings]=useState([]);
+
+  
+
+  const statuses = ['ALL', 'CONFIRMED', 'PENDING', 'COMPLETED', 'CANCELLED'];
 
   useEffect(() => {
     fetchBookings();
@@ -34,7 +40,17 @@ const MyBookings = () => {
   const fetchBookings = async () => {
     try {
       setLoading(true);
-      await getBookings();
+      const token = localStorage.getItem('token');
+      const decode= jwtDecode(token);
+      
+      // await getBookings();
+      const bookingres= await bookingAPI.getByCustomerId(decode.user.id);
+      console.log(bookingres.data);
+
+
+      const allBookings= bookingres.data;
+      setAllBookings(allBookings);
+      
     } catch (error) {
       console.error('Error fetching bookings:', error);
       toast.error('Failed to load bookings');
@@ -57,6 +73,7 @@ const MyBookings = () => {
   };
 
   const handleOpenPaymentModal = (booking) => {
+    console.log(booking);
     setSelectedBooking(booking);
     setShowPaymentModal(true);
   };
@@ -107,10 +124,10 @@ const MyBookings = () => {
 
   const getStatusBadge = (status) => {
     const statusConfig = {
-      'confirmed': { class: 'bg-success', icon: 'fa-check', text: 'Confirmed' },
-      'in-progress': { class: 'bg-primary', icon: 'fa-play', text: 'In Progress' },
-      'completed': { class: 'bg-info', icon: 'fa-check-double', text: 'Completed' },
-      'cancelled': { class: 'bg-danger', icon: 'fa-times', text: 'Cancelled' }
+      'CONFIRMED': { class: 'bg-success', icon: 'fa-check', text: 'Confirmed' },
+      'PENDING': { class: 'bg-primary', icon: 'fa-play', text: 'In Progress' },
+      'COMPLETED': { class: 'bg-info', icon: 'fa-check-double', text: 'Completed' },
+      'CANCELLED': { class: 'bg-danger', icon: 'fa-times', text: 'Cancelled' }
     };
     
     const config = statusConfig[status] || { class: 'bg-secondary', icon: 'fa-question', text: 'Unknown' };
@@ -134,8 +151,9 @@ const MyBookings = () => {
     return diffHours;
   };
 
-  const filteredBookings = bookings.filter(booking => {
-    const matchesStatus = selectedStatus === 'All' || booking.status === selectedStatus;
+  const filteredBookings = allBookings.filter(booking => {
+   
+    const matchesStatus = selectedStatus === 'ALL' || booking.status === selectedStatus;
     const matchesSearch = searchTerm === '' || 
       booking.drone?.model?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       booking.id.toString().includes(searchTerm);
@@ -144,11 +162,11 @@ const MyBookings = () => {
 
   const getBookingStats = () => {
     const stats = {
-      total: bookings.length,
-      confirmed: bookings.filter(b => b.status === 'confirmed').length,
-      inProgress: bookings.filter(b => b.status === 'in-progress').length,
-      completed: bookings.filter(b => b.status === 'completed').length,
-      cancelled: bookings.filter(b => b.status === 'cancelled').length
+      total: allBookings.length,
+      confirmed: allBookings.filter(b => b.status === 'CONFIRMED').length,
+      pending: allBookings.filter(b => b.status === 'PENDING').length,
+      completed: allBookings.filter(b => b.status === 'COMPLETED').length,
+      cancelled: allBookings.filter(b => b.status === 'CANCELLED').length
     };
     return stats;
   };
@@ -205,7 +223,7 @@ const MyBookings = () => {
                   </div>
                   <div className="col-md-2 col-6 mb-3">
                     <div className="border-end">
-                      <h3 className="text-primary mb-1">{stats.inProgress}</h3>
+                      <h3 className="text-primary mb-1">{stats.pending}</h3>
                       <small className="text-muted">In Progress</small>
                     </div>
                   </div>
@@ -224,7 +242,7 @@ const MyBookings = () => {
                   <div className="col-md-2 col-6 mb-3">
                     <div>
                       <h3 className="text-warning mb-1">
-                        ${bookings.reduce((sum, booking) => sum + (booking.totalAmount || 0), 0).toFixed(2)}
+                      ₹{allBookings.reduce((sum, booking) => sum + (booking.totalAmount || 0), 0).toFixed(2)}
                       </h3>
                       <small className="text-muted">Total Spent</small>
                     </div>
@@ -272,12 +290,12 @@ const MyBookings = () => {
             <i className="fas fa-calendar-times fa-3x text-muted mb-3"></i>
             <h3>No bookings found</h3>
             <p className="text-muted">
-              {searchTerm || selectedStatus !== 'All' 
+              {searchTerm || selectedStatus !== 'ALL' 
                 ? 'Try adjusting your search criteria' 
                 : 'Start by booking your first drone rental'
               }
             </p>
-            {!searchTerm && selectedStatus === 'All' && (
+            {!searchTerm && selectedStatus === 'ALL' && (
               <Link to="/drones" className="btn btn-primary-custom">
                 <i className="fas fa-drone me-2"></i>
                 Browse Drones
@@ -328,19 +346,12 @@ const MyBookings = () => {
                             </small>
                             <small className="text-muted d-block">
                               <i className="fas fa-map-marker-alt me-1"></i>
-                              <strong>Location:</strong> {booking.pickupLocation}
+                              <strong>Location:</strong> {booking.drone.location}
                             </small>
                           </div>
                         </div>
 
-                        {booking.specialInstructions && (
-                          <div className="mb-2">
-                            <small className="text-muted">
-                              <i className="fas fa-sticky-note me-1"></i>
-                              <strong>Special Instructions:</strong> {booking.specialInstructions}
-                            </small>
-                          </div>
-                        )}
+                       
 
                         {/* Related Entities */}
                         <div className="row">
@@ -383,7 +394,7 @@ const MyBookings = () => {
                       <div className="col-md-3">
                         <div className="text-end">
                           <h5 className="text-primary mb-2">
-                            ${booking.totalAmount?.toFixed(2)}
+                          ₹{booking.totalAmount?.toFixed(2)}
                           </h5>
                           
                           <div className="d-grid gap-2">
@@ -395,7 +406,7 @@ const MyBookings = () => {
                               View Details
                             </Link>
                             
-                            {booking.status === 'confirmed' && (
+                            {booking.status === 'CONFIRMED' && (
                               <button
                                 className="btn btn-outline-danger btn-sm"
                                 onClick={() => handleCancelBooking(booking.id)}
@@ -406,17 +417,17 @@ const MyBookings = () => {
                             )}
                             
                             {/* Payment Button */}
-                            {booking.payments && booking.payments[0]?.paymentStatus === 'pending' && (
-                              <button
-                                className="btn btn-outline-success btn-sm"
-                                onClick={() => handleOpenPaymentModal(booking)}
-                              >
-                                <i className="fas fa-credit-card me-1"></i>
-                                Pay Now
-                              </button>
-                            )}
+                            {(booking.status === 'CONFIRMED' || (booking.payments[0]?.paymentStatus === 'PENDING')) && (
+                <button
+    className="btn btn-outline-success btn-sm"
+    onClick={() => handleOpenPaymentModal(booking)}
+  >
+    <i className="fas fa-credit-card me-1"></i>
+    Pay Now
+  </button>
+)}
                             
-                            {booking.status === 'completed' && !booking.ratings?.length && (
+                            {booking.status === 'COMPLETED' && !booking.ratings?.length && (
                               <button
                                 className="btn btn-outline-warning btn-sm mt-2"
                                 onClick={() => handleOpenRatingModal(booking)}
@@ -454,30 +465,8 @@ const MyBookings = () => {
           </div>
         )}
 
-        {/* Quick Actions */}
-        <div className="row mt-5">
-          <div className="col-12 text-center">
-            <div className="card card-custom">
-              <div className="card-body">
-                <h5 className="mb-3">Quick Actions</h5>
-                <div className="d-flex justify-content-center gap-3 flex-wrap">
-                  <Link to="/drones" className="btn btn-primary-custom">
-                    <i className="fas fa-drone me-2"></i>
-                    Book Another Drone
-                  </Link>
-                  <Link to="/profile" className="btn btn-outline-primary">
-                    <i className="fas fa-user me-2"></i>
-                    Update Profile
-                  </Link>
-                  <button className="btn btn-outline-info">
-                    <i className="fas fa-download me-2"></i>
-                    Download History
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+       
+        
       </div>
       {/* Payment Modal */}
       <PaymentModal

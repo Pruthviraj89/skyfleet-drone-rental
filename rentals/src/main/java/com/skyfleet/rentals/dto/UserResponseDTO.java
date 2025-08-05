@@ -13,4 +13,5 @@ public class UserResponseDTO extends BaseDTO {
 	private String phone;
 	private String address;
 	private Role role;
+	
 }

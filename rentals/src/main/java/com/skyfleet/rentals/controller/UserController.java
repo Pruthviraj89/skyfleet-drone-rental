@@ -1,14 +1,28 @@
 package com.skyfleet.rentals.controller;
 
+
+
+
+
 import com.skyfleet.rentals.dto.AddUserDTO;
 import com.skyfleet.rentals.dto.ApiResponse;
 import com.skyfleet.rentals.dto.AuthResponseDTO;
 import com.skyfleet.rentals.dto.UserLoginDTO;
 import com.skyfleet.rentals.dto.UserResponseDTO;
+import com.skyfleet.rentals.entity.Role;
+import com.skyfleet.rentals.entity.User;
 import com.skyfleet.rentals.service.UserService;
 import com.skyfleet.rentals.util.JwtUtil;
 
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +37,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/users")
 @AllArgsConstructor
 public class UserController {
+	
+	private final AuthenticationManager authenticationManager;
     private UserService userService;
     private JwtUtil jwtUtil;
-    private AuthenticationManager authenticationManager;
+   
     
     @PostMapping("/auth/register")
     public ResponseEntity<?> registerUser(@RequestBody AddUserDTO user) {
@@ -80,10 +96,34 @@ public class UserController {
         return ResponseEntity.ok(new ApiResponse("User Deleted Successfully"));
     }
     
-    @GetMapping("/profile")
+    @GetMapping("/me")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<?> getCurrentUserProfile() {
-        // This will be implemented to get current user from security context
-        return ResponseEntity.ok(new ApiResponse("Profile endpoint - to be implemented"));
+    public ResponseEntity<?> getCurrentUserProfile(Authentication authentication) {
+
+
+    	 if (authentication == null || !authentication.isAuthenticated()) {
+             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
+         }
+    	 
+    	 
+    	// Extract principal (usually username/email)
+         String email = authentication.getName(); // Since you used email as principal
+         
+        UserResponseDTO entity= userService.getUserByEmailAfterTokenVerification(email);
+        
+        
+    	 
+    	 
+    	
+        return ResponseEntity.ok().body(
+                Map.of(
+                    "message", "Token is valid",
+                    "email", entity.getEmail(),
+                    "role",entity.getRole(),
+                    "name",entity.getName(),
+                    "id",entity.getId()
+                    
+                )
+            );
     }
 }

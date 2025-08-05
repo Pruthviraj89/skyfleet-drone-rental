@@ -68,7 +68,7 @@ export const droneAPI = {
   getAll: (params = {}) => api.get('/api/drones', { params }),
   
   // Get drone by ID
-  getById: (id) => api.get(`/api/drones/${id}`),
+  getById: (id) => api.get(`/api/drones/getById/${id}`),
   
   // Create new drone (admin only)
   create: (droneData) => api.post('/api/drones', droneData),
@@ -93,6 +93,8 @@ export const bookingAPI = {
   
   // Get all bookings (admin only)
   getAllAdmin: () => api.get('/api/admin/bookings'),
+
+  getByCustomerId:(customerId)=>api.get(`/api/bookings/byCustomerId/${customerId}`),
   
   // Get booking by ID
   getById: (id) => api.get(`/api/bookings/${id}`),
@@ -122,7 +124,10 @@ export const paymentAPI = {
   update: (id, paymentData) => api.put(`/api/payments/${id}`, paymentData),
   
   // Delete payment
-  delete: (id) => api.delete(`/api/payments/${id}`)
+  delete: (id) => api.delete(`/api/payments/${id}`),
+
+  verifyPayment:(paymentData)=> api.post(`/api/payments/verifyPayment`,paymentData)
+
 };
 
 // API endpoints for penalties
@@ -147,6 +152,8 @@ export const undertakingAPI = {
   
   // Create undertaking
   create: (undertakingData) => api.post('/api/undertakings', undertakingData),
+
+  getAllUndertakings: () => api.get(`/api/undertakings`),
   
   // Update undertaking
   update: (id, undertakingData) => api.put(`/api/undertakings/${id}`, undertakingData),
