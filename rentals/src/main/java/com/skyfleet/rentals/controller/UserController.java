@@ -96,7 +96,7 @@ public class UserController {
         return ResponseEntity.ok(new ApiResponse("User Deleted Successfully"));
     }
     
-    @GetMapping("/me")
+    @GetMapping("/profile")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<?> getCurrentUserProfile(Authentication authentication) {
 

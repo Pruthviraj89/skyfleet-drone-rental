@@ -31,7 +31,7 @@ const authReducer = (state, action) => {
     case AUTH_ACTIONS.REGISTER_SUCCESS:
       localStorage.setItem('token', action.payload.token);
       const decoded = jwtDecode(action.payload.token);
-      console.log(decoded.user);
+      console.log(decoded);
       return {
         ...state,
         token: action.payload.token,
@@ -97,8 +97,8 @@ export const AuthProvider = ({ children }) => {
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
      
       
-      const response = await api.get('/api/users/me');
-      console.log(response.data); 
+      const response = await api.get('/api/users/profile');
+      console.log(response); 
 
       const user={
 
