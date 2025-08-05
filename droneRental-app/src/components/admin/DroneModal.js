@@ -11,6 +11,7 @@ const DroneModal = ({ open, onClose, drone, onSave }) => {
     location: "",
     imageUrl: "",
     guideUrl: "",
+    dronePrice:""
   });
   const [submitting, setSubmitting] = useState(false);
 
@@ -25,6 +26,7 @@ const DroneModal = ({ open, onClose, drone, onSave }) => {
         location: drone.location || "",
         imageUrl: drone.imageUrl || "",
         guideUrl: drone.guideUrl || "",
+        dronePrice:drone.dronePrice || ""
       });
     } else {
       setForm({
@@ -36,6 +38,7 @@ const DroneModal = ({ open, onClose, drone, onSave }) => {
         location: "",
         imageUrl: "",
         guideUrl: "",
+        dronePrice:""
       });
     }
   }, [drone, isEdit, open]);
@@ -55,7 +58,8 @@ const DroneModal = ({ open, onClose, drone, onSave }) => {
         !form.status ||
         !form.pricePerHour ||
         !form.batteryLife ||
-        !form.location
+        !form.location ||
+        !form.dronePrice
       ) {
         alert("Please fill all required fields.");
         setSubmitting(false);
@@ -136,6 +140,19 @@ const DroneModal = ({ open, onClose, drone, onSave }) => {
                   className="form-control"
                   name="pricePerHour"
                   value={form.pricePerHour}
+                  onChange={handleChange}
+                  required
+                  min="0"
+                  step="0.01"
+                />
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Drone Price (₹)</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  name="dronePrice"
+                  value={form.dronePrice}
                   onChange={handleChange}
                   required
                   min="0"

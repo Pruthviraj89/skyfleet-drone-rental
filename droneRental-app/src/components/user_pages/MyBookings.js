@@ -44,7 +44,9 @@ const MyBookings = () => {
       const decode= jwtDecode(token);
       
       // await getBookings();
-      const bookingres= await bookingAPI.getByCustomerId(decode.user.id);
+      console.log("hyelal")
+      
+      const bookingres= await bookingAPI.getByCustomerId(decode.userId);
       console.log(bookingres.data);
 
 

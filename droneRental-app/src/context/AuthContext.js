@@ -25,19 +25,29 @@ const AUTH_ACTIONS = {
 };
 
 // Reducer function
-const authReducer = (state, action) => {
+const authReducer =  (state, action) => {
   switch (action.type) {
     case AUTH_ACTIONS.LOGIN_SUCCESS:
     case AUTH_ACTIONS.REGISTER_SUCCESS:
       localStorage.setItem('token', action.payload.token);
       const decoded = jwtDecode(action.payload.token);
+      //const decoded = await api.get('/api/users/profile');
+      console.log("this is decode");
+      console.log(decoded);
+      const user={
+
+        role: decoded.role,
+        name:decoded.sub,
+        email:decoded.sub,
+        id: decoded.userId
+      };
       console.log(decoded);
       return {
         ...state,
         token: action.payload.token,
         isAuthenticated: true,
         loading: false,
-        user: decoded.user
+        user: user
       };
     
     case AUTH_ACTIONS.USER_LOADED:

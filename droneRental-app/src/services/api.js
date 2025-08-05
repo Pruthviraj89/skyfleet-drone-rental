@@ -53,7 +53,7 @@ export const userAPI = {
   getById: (id) => api.get(`/api/users/${id}`),
   
   // Get current user
-  getCurrentUser: () => api.get('/api/users/me'),
+  getCurrentUser: () => api.get('/api/users/profile'),
   
   // Update user profile
   updateProfile: (userData) => api.put('/api/users/profile', userData),
@@ -71,7 +71,7 @@ export const droneAPI = {
   getById: (id) => api.get(`/api/drones/getById/${id}`),
   
   // Create new drone (admin only)
-  create: (droneData) => api.post('/api/drones', droneData),
+  create: (droneData) => api.post('/api/drones/add/drone', droneData),
   
   // Update drone (admin only)
   update: (id, droneData) => api.put(`/api/drones/${id}`, droneData),
