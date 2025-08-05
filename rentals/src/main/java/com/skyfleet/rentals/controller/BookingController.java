@@ -4,6 +4,7 @@ import com.skyfleet.rentals.dto.ApiResponse;
 import com.skyfleet.rentals.dto.BookingRequestDTO;
 
 import com.skyfleet.rentals.dto.BookingResponseDTO;
+import com.skyfleet.rentals.dto.MyBookingsDTO;
 import com.skyfleet.rentals.entity.Booking;
 import com.skyfleet.rentals.service.BookingService;
 
@@ -45,4 +46,10 @@ public class BookingController {
         bookingService.deleteBooking(id);
         return ResponseEntity.noContent().build();
     }
+    
+    @GetMapping("/byCustomerId/{id}")
+    public ResponseEntity<List<MyBookingsDTO>> getBookingByCustomerId(@PathVariable Long id) {
+       return ResponseEntity.ok(bookingService.getBookingsByCustomerId(id));
+    }
+    
 }

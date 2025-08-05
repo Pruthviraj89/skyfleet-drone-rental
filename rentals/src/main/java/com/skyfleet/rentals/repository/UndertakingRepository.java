@@ -19,6 +19,11 @@ public interface UndertakingRepository  extends JpaRepository<Undertaking, Long>
 		    ) grouped ON u.id = grouped.id
 		""", nativeQuery = true)
 		List<Undertaking> findDistinctByDamageClauseText();
+	
+	
+	
+		Undertaking findByBookingId(Long bookingId);
+		
 
 
 

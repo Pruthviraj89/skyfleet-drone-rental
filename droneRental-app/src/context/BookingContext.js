@@ -121,6 +121,7 @@ export const BookingProvider = ({ children }) => {
       toast.error(message);
     }
   };
+  
 
   // Get single booking by ID
   const getBooking = async (id) => {

@@ -41,4 +41,7 @@ public class PaymentResponseDTO extends BaseDTO {
 
 	   
 	    private PaymentStatus paymentStatus; 
+	    
+	  
+	    private String razorpayOrderId;
 }

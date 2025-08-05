@@ -1,6 +1,7 @@
 package com.skyfleet.rentals.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
@@ -8,7 +9,9 @@ import com.skyfleet.rentals.custom_exceptions.ApiException;
 import com.skyfleet.rentals.dto.PaymentRequestDTO;
 import com.skyfleet.rentals.dto.PaymentResponseDTO;
 import com.skyfleet.rentals.dto.RatingResponseDTO;
+import com.skyfleet.rentals.dto.RazorpayPaymentResponseDTO;
 import com.skyfleet.rentals.entity.Booking;
+import com.skyfleet.rentals.entity.BookingStatus;
 import com.skyfleet.rentals.entity.Payment;
 import com.skyfleet.rentals.entity.PaymentStatus;
 import com.skyfleet.rentals.entity.RazorpayOrderResponse;
@@ -16,8 +19,10 @@ import com.skyfleet.rentals.repository.BookingRepository;
 import com.skyfleet.rentals.repository.PaymentRepository;
 import com.skyfleet.rentals.repository.UserRepository;
 
+import io.swagger.v3.oas.models.responses.ApiResponse;
 import lombok.AllArgsConstructor;
 
+import org.apache.commons.codec.binary.Hex;
 import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +31,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 @Service
 @Transactional
@@ -46,10 +56,10 @@ public class PaymentServiceImpl implements PaymentService {
     
     
     @Value("${razorpay.api.key}")
-    private String apiKey;
+    private   String apiKey;
 
     @Value("${razorpay.api.secret}")
-    private String apiSecret;
+    private  String apiSecret;
 
     @Autowired
     public PaymentServiceImpl(PaymentRepository paymentRepository, UserRepository userRepository,
@@ -115,7 +125,7 @@ public class PaymentServiceImpl implements PaymentService {
         		paymentRepository.save(entity);
         		
         		
-        		
+        		return modelMapper.map(entity, PaymentResponseDTO.class);
         		
     		}catch (Exception e) {
 				// TODO: handle exception
@@ -125,8 +135,41 @@ public class PaymentServiceImpl implements PaymentService {
     		throw new ApiException("booking_id Not Found");
     	}
     	
-    	return null;
+    	
     }
+    
+    
+    public PaymentResponseDTO verifyPayment( RazorpayPaymentResponseDTO response) {
+        try {
+        	System.out.println("inside the try block");
+        	System.out.println(response.toString());
+           
+            if(isSignatureValid(response.getRazorpayOrderId(),response.getRazorpayPaymentId(),response.getRazorpaySignature()))
+             {
+                // ✅ Signature is valid → Update DB
+                Payment payment = paymentRepository.findByRazorpayOrderId(response.getRazorpayOrderId());
+              Booking booking= bookingRepository.findById(payment.getBooking().getId()).orElseThrow(()->new ApiException("Booking Id not Found For doing Payment"));
+                if (payment != null) {
+                	payment.setRazorpayPaymentId(response.getRazorpayPaymentId());
+                	payment.setRazorpaySignature(response.getRazorpaySignature());
+                	payment.setPaymentStatus(PaymentStatus.COMPLETED);
+                	booking.setStatus(BookingStatus.COMPLETED);
+                	payment.setPaymentMethod("UPI");
+                    paymentRepository.save(payment);
+                    bookingRepository.save(booking);
+                }
+                return modelMapper.map(payment, PaymentResponseDTO.class);
+            } else {
+               throw new ApiException("Payment Failed");
+            }
+        } catch (Exception e) {
+            throw new ApiException("Payment Error:"+e);
+        }
+    }
+    
+    
+    
+    
 
     @Override
     public List<PaymentResponseDTO> getAllPayments() {
@@ -163,4 +206,28 @@ public class PaymentServiceImpl implements PaymentService {
         paymentRepository.deleteById(id);
        
     }
+    
+    
+    public String generateSignature(String orderId, String paymentId, String secret) {
+        try {
+            String payload = orderId + "|" + paymentId;
+
+            Mac mac = Mac.getInstance("HmacSHA256");
+            mac.init(new SecretKeySpec(secret.getBytes(), "HmacSHA256"));
+
+            byte[] digest = mac.doFinal(payload.getBytes());
+
+            // Razorpay uses hex encoding
+            return Hex.encodeHexString(digest);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to generate Razorpay signature", e);
+        }
+    }
+    
+    public  boolean isSignatureValid(String orderId, String paymentId, String signatureFromRazorpay) {
+        String generatedSignature = generateSignature(orderId, paymentId, apiSecret);
+        return generatedSignature.equals(signatureFromRazorpay);
+    }
+    
+    
 }

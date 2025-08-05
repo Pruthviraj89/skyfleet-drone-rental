@@ -3,16 +3,19 @@ package com.skyfleet.rentals.service;
 import com.skyfleet.rentals.custom_exceptions.ApiException;
 import com.skyfleet.rentals.dto.BookingRequestDTO;
 import com.skyfleet.rentals.dto.BookingResponseDTO;
+import com.skyfleet.rentals.dto.MyBookingsDTO;
 import com.skyfleet.rentals.entity.Booking;
 
 import com.skyfleet.rentals.entity.BookingStatus;
 import com.skyfleet.rentals.entity.DeliveryStatus;
 import com.skyfleet.rentals.entity.Drone;
 import com.skyfleet.rentals.entity.DroneStatus;
+import com.skyfleet.rentals.entity.Payment;
 import com.skyfleet.rentals.entity.Undertaking;
 import com.skyfleet.rentals.entity.User;
 import com.skyfleet.rentals.repository.BookingRepository;
 import com.skyfleet.rentals.repository.DroneRepository;
+import com.skyfleet.rentals.repository.PaymentRepository;
 import com.skyfleet.rentals.repository.UndertakingRepository;
 import com.skyfleet.rentals.repository.UserRepository;
 
@@ -28,6 +31,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -43,6 +47,8 @@ public class BookingServiceImpl implements BookingService {
     private DroneRepository droneRepository;
     
     private UndertakingRepository undertakingRespository;
+    
+    private PaymentRepository paymentRepository;
     
     private ModelMapper modelMapper;
     
@@ -127,6 +133,36 @@ public class BookingServiceImpl implements BookingService {
        rs.setUserId(entity.getUser().getId());
        rs.setDroneId(entity.getDrone().getId());
        return rs;
+    }
+    
+    
+    
+    
+    @Override
+    public List<MyBookingsDTO> getBookingsByCustomerId(Long id) throws RuntimeException {
+    		
+    	
+    	if(id==null)
+    		throw new ApiException("User Id Cannot Be Null");
+//    	User user= userRepository.findById(id).orElseThrow(()-> new ApiException("user Not Found"));
+    	List<MyBookingsDTO> entities= bookingRepository.getBookingsByCustomerId(id).stream().map((entity)->{
+    		MyBookingsDTO m= modelMapper.map(entity, MyBookingsDTO.class);
+    		return m;
+    	}).toList();
+    	
+    	
+    	return entities;
+//    	List<Undertaking> undertakingList= entities.stream().map((entity)->{
+//    		Undertaking u= undertakingRespository.findByBookingId(entity.getId());
+//    		return u;
+//    	}).toList();
+//    	
+//    	List<Payment> payments = entities.stream().map((entity)->{
+//    		Payment payment= paymentRepository.getById(id)
+//    	}).toList();
+    	
+    	
+      
     }
 
     @Override

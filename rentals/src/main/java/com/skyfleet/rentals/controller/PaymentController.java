@@ -2,6 +2,7 @@ package com.skyfleet.rentals.controller;
 
 import com.skyfleet.rentals.dto.PaymentRequestDTO;
 import com.skyfleet.rentals.dto.PaymentResponseDTO;
+import com.skyfleet.rentals.dto.RazorpayPaymentResponseDTO;
 import com.skyfleet.rentals.entity.Payment;
 import com.skyfleet.rentals.service.PaymentService;
 
@@ -43,5 +44,15 @@ public class PaymentController {
     public ResponseEntity<Void> deletePayment(@PathVariable Long id) {
         paymentService.deletePayment(id);
         return ResponseEntity.noContent().build();
+    }
+    
+    
+    
+    @PostMapping("/verifyPayment")
+    public ResponseEntity<PaymentResponseDTO> verifyPayment(@RequestBody RazorpayPaymentResponseDTO response ){
+
+    return ResponseEntity.ok(paymentService.verifyPayment(response));
+    	
+    	
     }
 }

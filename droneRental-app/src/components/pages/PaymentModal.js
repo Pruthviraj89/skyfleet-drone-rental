@@ -35,6 +35,7 @@ const PaymentModal = ({ open, onClose, booking, onPaymentSuccess }) => {
         amountPaid: booking.totalAmount,
       });
       const order = res.data;
+      console.log(order);
       const loaded = await loadRazorpayScript();
       if (!loaded) {
         toast.error('Failed to load Razorpay SDK.');
@@ -42,15 +43,22 @@ const PaymentModal = ({ open, onClose, booking, onPaymentSuccess }) => {
         return;
       }
       const options = {
-        key: order.razorpayKey || order.key || process.env.REACT_APP_RAZORPAY_KEY, // fallback
-        amount: order.amount, // in paise
-        currency: order.currency || 'INR',
+        key: "rzp_test_pailMbyRNMgdZC", // fallback
+        amount: order.amountPaid, // in paise
+        currency:'INR',
         name: 'SkyFleet Drone Rental',
-        description: `Booking #${booking.id}`,
+        description: `${booking.drone.model}`,
         order_id: order.razorpayOrderId || order.id,
-        handler: function (response) {
+        handler: async function  (response) {
+          console.log(response);
           // TODO: Send response.razorpay_payment_id, response.razorpay_order_id, response.razorpay_signature to backend for verification
-          toast.success('Payment successful!');
+          const paymentSuccResponse=await  paymentAPI.verifyPayment({
+            razorpayPaymentId:response.razorpay_payment_id,
+            razorpayOrderId:response.razorpay_order_id,
+            razorpaySignature:response.razorpay_signature
+          })
+          console.log(paymentSuccResponse);
+          toast.success(`Payment successful!! order Id: ${paymentSuccResponse.razorpayOrderId}`);
           onPaymentSuccess();
           onClose();
         },
