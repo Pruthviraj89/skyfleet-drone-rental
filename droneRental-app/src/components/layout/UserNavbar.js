@@ -23,10 +23,10 @@ const UserNavbar = () => {
     <nav className="navbar navbar-expand-lg navbar-dark navbar-custom">
       <div className="container">
         {/* Brand */}
-        <Link className="navbar-brand" to="/">
+        <h1 className="navbar-brand">
           <i className="fas fa-drone me-2"></i>
           SkyFleet Rentals
-        </Link>
+        </h1>
 
         {/* Mobile Toggle */}
         <button
@@ -169,19 +169,6 @@ const UserNavbar = () => {
                   <Link className="dropdown-item" to="/favorites">
                     <i className="fas fa-heart me-2"></i>
                     My Favorites
-                  </Link>
-                </li>
-                <li><hr className="dropdown-divider" /></li>
-                <li>
-                  <Link className="dropdown-item" to="/settings">
-                    <i className="fas fa-cog me-2"></i>
-                    Settings
-                  </Link>
-                </li>
-                <li>
-                  <Link className="dropdown-item" to="/help">
-                    <i className="fas fa-question-circle me-2"></i>
-                    Help & Support
                   </Link>
                 </li>
                 <li><hr className="dropdown-divider" /></li>
