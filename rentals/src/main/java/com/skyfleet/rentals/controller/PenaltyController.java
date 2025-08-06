@@ -1,5 +1,6 @@
 package com.skyfleet.rentals.controller;
 
+import com.skyfleet.rentals.custom_exceptions.ApiException;
 import com.skyfleet.rentals.dto.PenaltyRequestDTO;
 import com.skyfleet.rentals.dto.PenaltyResponseDTO;
 import com.skyfleet.rentals.entity.Penalty;
@@ -36,6 +37,19 @@ public class PenaltyController {
     	
     	return ResponseEntity.ok(penaltyService.getPenaltyById(id));
       
+    }
+    
+    @GetMapping("/booking/{bookingId}")
+    public ResponseEntity<List<PenaltyResponseDTO>> getPenaltiesByBooking(@PathVariable Long bookingId) {
+        System.out.println("🎯 Controller: Getting penalties for booking ID: " + bookingId);
+        
+        try {
+            List<PenaltyResponseDTO> penalties = penaltyService.getPenaltiesByBookingId(bookingId);
+            return ResponseEntity.ok(penalties);
+        } catch (ApiException e) {
+            System.err.println("❌ Error in penalty controller: " + e.getMessage());
+            throw e; // Let global exception handler deal with it
+        }
     }
 
     @DeleteMapping("/{id}")

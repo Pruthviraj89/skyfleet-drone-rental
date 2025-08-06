@@ -76,6 +76,27 @@ public class PenaltyServiceImpl implements PenaltyService {
     }
 
     @Override
+    public List<PenaltyResponseDTO> getPenaltiesByBookingId(Long bookingId) {
+        System.out.println("🔍 Fetching penalties for booking ID: " + bookingId);
+        
+        // Validate that the booking exists
+        if (!bookingRepository.existsById(bookingId)) {
+            throw new ApiException("Booking with ID " + bookingId + " not found");
+        }
+        
+        // Fetch penalties for the booking
+        List<Penalty> penalties = penaltyRepository.findByBookingId(bookingId);
+        
+        System.out.println("📋 Found " + penalties.size() + " penalties for booking " + bookingId);
+        
+        // Convert to DTOs
+        return penalties.stream().map(penalty -> {
+            PenaltyResponseDTO dto = modelMapper.map(penalty, PenaltyResponseDTO.class);
+            dto.setBookingId(penalty.getBooking().getId());
+            return dto;
+        }).toList();
+    }
+    @Override
     public List<PenaltyResponseDTO> getAllPenalties() {
         return penaltyRepository.findAll().stream().map(e->{
         	PenaltyResponseDTO rs= modelMapper.map(e, PenaltyResponseDTO.class);

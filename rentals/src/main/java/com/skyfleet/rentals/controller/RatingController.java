@@ -1,5 +1,6 @@
 package com.skyfleet.rentals.controller;
 
+import com.skyfleet.rentals.custom_exceptions.ApiException;
 import com.skyfleet.rentals.dto.RatingRequestDTO;
 import com.skyfleet.rentals.dto.RatingResponseDTO;
 import com.skyfleet.rentals.entity.Rating;
@@ -38,6 +39,19 @@ public class RatingController {
     	return ResponseEntity.ok(ratingService.getRatingById(id));
     }
 
+    @GetMapping("/booking/{bookingId}")
+    public ResponseEntity<List<RatingResponseDTO>> getRatingsByBooking(@PathVariable Long bookingId) {
+        System.out.println("🎯 Controller: Getting ratings for booking ID: " + bookingId);
+        
+        try {
+            List<RatingResponseDTO> ratings = ratingService.getRatingsByBookingId(bookingId);
+            return ResponseEntity.ok(ratings);
+        } catch (ApiException e) {
+            System.err.println("❌ Error in rating controller: " + e.getMessage());
+            throw e; // Let global exception handler deal with it
+        }
+    }
+    
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRating(@PathVariable Long id) {
         ratingService.deleteRating(id);

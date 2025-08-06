@@ -13,6 +13,6 @@ public interface PenaltyService {
     List<PenaltyResponseDTO> getAllPenalties();
     PenaltyResponseDTO getPenaltyById(Long id);
     void deletePenalty(Long id);
-    
+    List<PenaltyResponseDTO> getPenaltiesByBookingId(Long bookingId);
    Penalty calculatePenalty(Booking booking, PenaltyReasonStatus penaltyReason);
 }

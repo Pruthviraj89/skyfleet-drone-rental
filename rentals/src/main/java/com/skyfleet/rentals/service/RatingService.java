@@ -10,4 +10,5 @@ public interface RatingService {
     List<RatingResponseDTO> getAllRatings();
     RatingResponseDTO getRatingById(Long id);
     void deleteRating(Long id);
+    List<RatingResponseDTO> getRatingsByBookingId(Long bookingId);
 }

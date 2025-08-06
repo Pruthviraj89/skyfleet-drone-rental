@@ -44,4 +44,5 @@ public class PaymentResponseDTO extends BaseDTO {
 	    
 	  
 	    private String razorpayOrderId;
+	    private BookingResponseDTO booking;
 }

@@ -103,6 +103,29 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
+    public List<RatingResponseDTO> getRatingsByBookingId(Long bookingId) {
+        System.out.println("🔍 Fetching ratings for booking ID: " + bookingId);
+        
+        // Validate that the booking exists
+        if (!bookingRepository.existsById(bookingId)) {
+            throw new ApiException("Booking with ID " + bookingId + " not found");
+        }
+        
+        // Fetch ratings for the booking
+        List<Rating> ratings = ratingRepository.findByBookingId(bookingId);
+        
+        System.out.println("📋 Found " + ratings.size() + " ratings for booking " + bookingId);
+        
+        // Convert to DTOs
+        return ratings.stream().map(rating -> {
+            RatingResponseDTO dto = modelMapper.map(rating, RatingResponseDTO.class);
+            dto.setBookingId(rating.getBooking().getId());
+            dto.setUserId(rating.getUser().getId());
+            dto.setDroneId(rating.getDrone().getId());
+            return dto;
+        }).toList();
+    }
+    @Override
     public void deleteRating(Long id) {
         ratingRepository.deleteById(id);
     }

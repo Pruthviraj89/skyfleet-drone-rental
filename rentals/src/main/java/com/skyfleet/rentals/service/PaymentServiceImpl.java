@@ -6,10 +6,13 @@ import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
 import com.skyfleet.rentals.custom_exceptions.ApiException;
+import com.skyfleet.rentals.dto.BookingResponseDTO;
+import com.skyfleet.rentals.dto.DroneResponseDTO;
 import com.skyfleet.rentals.dto.PaymentRequestDTO;
 import com.skyfleet.rentals.dto.PaymentResponseDTO;
 import com.skyfleet.rentals.dto.RatingResponseDTO;
 import com.skyfleet.rentals.dto.RazorpayPaymentResponseDTO;
+import com.skyfleet.rentals.dto.UserResponseDTO;
 import com.skyfleet.rentals.entity.Booking;
 import com.skyfleet.rentals.entity.BookingStatus;
 import com.skyfleet.rentals.entity.Payment;
@@ -173,31 +176,57 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public List<PaymentResponseDTO> getAllPayments() {
-       // return paymentRepository.findAll();
-    	
-    return	paymentRepository.findAll().stream().map((entity)->{
-      	  
-      	  
-       	 PaymentResponseDTO rs=modelMapper.map(entity, PaymentResponseDTO.class);
-       	 rs.setBookingId(entity.getBooking().getId());
-           return rs;
-         }).toList();
-    	
-    	
-    	
+        return paymentRepository.findAll().stream().map((entity) -> {
+            // Map basic payment data
+            PaymentResponseDTO rs = modelMapper.map(entity, PaymentResponseDTO.class);
+            rs.setBookingId(entity.getBooking().getId());
+            
+            // ✅ Create nested BookingResponseDTO
+            BookingResponseDTO bookingDto = modelMapper.map(entity.getBooking(), BookingResponseDTO.class);
+            bookingDto.setUserId(entity.getBooking().getUser().getId());
+            bookingDto.setDroneId(entity.getBooking().getDrone().getId());
+            
+            // ✅ Create nested UserResponseDTO
+            UserResponseDTO userDto = modelMapper.map(entity.getBooking().getUser(), UserResponseDTO.class);
+            userDto.setId(entity.getBooking().getUser().getId());
+            bookingDto.setUser(userDto);
+            
+            // ✅ Create nested DroneResponseDTO
+            DroneResponseDTO droneDto = modelMapper.map(entity.getBooking().getDrone(), DroneResponseDTO.class);
+            droneDto.setId(entity.getBooking().getDrone().getId());
+            bookingDto.setDrone(droneDto);
+            
+            // ✅ Set the nested booking data
+            rs.setBooking(bookingDto);
+            
+            return rs;
+        }).toList();
     }
+
 
     @Override
     public PaymentResponseDTO getPaymentById(Long id) {
-       // return paymentRepository.findById(id).orElse(null);
-    	
-    	Payment entity=paymentRepository.findById(id).orElseThrow(()->new ApiException("Payment_id not Found"));
-    	
-    	PaymentResponseDTO rs= modelMapper.map(entity, PaymentResponseDTO.class);
-    	
-		rs.setBookingId(entity.getBooking().getId());
-
-   	
+        Payment entity = paymentRepository.findById(id)
+            .orElseThrow(() -> new ApiException("Payment_id not Found"));
+        
+        PaymentResponseDTO rs = modelMapper.map(entity, PaymentResponseDTO.class);
+        rs.setBookingId(entity.getBooking().getId());
+        
+        // ✅ Add the same nested structure as getAllPayments()
+        BookingResponseDTO bookingDto = modelMapper.map(entity.getBooking(), BookingResponseDTO.class);
+        bookingDto.setUserId(entity.getBooking().getUser().getId());
+        bookingDto.setDroneId(entity.getBooking().getDrone().getId());
+        
+        UserResponseDTO userDto = modelMapper.map(entity.getBooking().getUser(), UserResponseDTO.class);
+        userDto.setId(entity.getBooking().getUser().getId());
+        bookingDto.setUser(userDto);
+        
+        DroneResponseDTO droneDto = modelMapper.map(entity.getBooking().getDrone(), DroneResponseDTO.class);
+        droneDto.setId(entity.getBooking().getDrone().getId());
+        bookingDto.setDrone(droneDto);
+        
+        rs.setBooking(bookingDto);
+        
         return rs;
     }
 

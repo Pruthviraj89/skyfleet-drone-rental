@@ -15,4 +15,5 @@ public interface BookingService {
     void updateBookingStatus(Long id, String status);
     
     List<MyBookingsDTO> getBookingsByCustomerId(Long id);
+    
 }

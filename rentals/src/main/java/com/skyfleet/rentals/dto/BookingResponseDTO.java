@@ -46,4 +46,6 @@ public class BookingResponseDTO extends BaseDTO {
 
 	    private DeliveryStatus deliverStatus;
 
+	    private UserResponseDTO user;
+	    private DroneResponseDTO drone;
 }

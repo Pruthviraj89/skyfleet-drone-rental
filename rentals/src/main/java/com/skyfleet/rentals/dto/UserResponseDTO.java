@@ -8,6 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserResponseDTO extends BaseDTO {
+
 	private String name;
 	private String email;
 	private String phone;

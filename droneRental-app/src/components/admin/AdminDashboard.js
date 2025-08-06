@@ -28,6 +28,9 @@ const AdminDashboard = () => {
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [bookingList, setBookingList] = useState([]);
   const [bookingLoading, setBookingLoading] = useState(false);
+  
+  // ✅ Added state for selected booking for penalties/ratings tabs
+  const [selectedBookingForTabs, setSelectedBookingForTabs] = useState(null);
 
   useEffect(() => {
     if (user?.role !== 'ADMIN') {
@@ -151,10 +154,12 @@ const AdminDashboard = () => {
     setEditingUser(null);
     setShowUserModal(true);
   };
+  
   const handleEditUser = (user) => {
     setEditingUser(user);
     setShowUserModal(true);
   };
+  
   const handleDeleteUser = async (user) => {
     if (window.confirm(`Delete user ${user.name}?`)) {
       try {
@@ -166,6 +171,7 @@ const AdminDashboard = () => {
       }
     }
   };
+  
   const handleSaveUser = async (form) => {
     try {
       if (editingUser) {
@@ -203,10 +209,12 @@ const AdminDashboard = () => {
     setEditingDrone(null);
     setShowDroneModal(true);
   };
+  
   const handleEditDrone = (drone) => {
     setEditingDrone(drone);
     setShowDroneModal(true);
   };
+  
   const handleDeleteDrone = async (drone) => {
     if (window.confirm(`Delete drone ${drone.model}?`)) {
       try {
@@ -218,6 +226,7 @@ const AdminDashboard = () => {
       }
     }
   };
+  
   const handleSaveDrone = async (form) => {
     try {
       if (editingDrone) {
@@ -255,6 +264,7 @@ const AdminDashboard = () => {
     setSelectedBooking(booking);
     setShowBookingModal(true);
   };
+  
   const handleDeleteBooking = async (booking) => {
     if (window.confirm(`Delete booking #${booking.id}?`)) {
       try {
@@ -266,6 +276,7 @@ const AdminDashboard = () => {
       }
     }
   };
+  
   const handleStatusChange = async (newStatus) => {
     try {
       await bookingAPI.update(selectedBooking.id, { ...selectedBooking, status: newStatus });
@@ -274,6 +285,12 @@ const AdminDashboard = () => {
     } catch (err) {
       toast.error('Failed to update status');
     }
+  };
+
+  // ✅ Added function to handle selecting booking for penalties/ratings
+  const handleSelectBookingForAnalysis = (booking) => {
+    setSelectedBookingForTabs(booking.id);
+    toast.info(`Selected booking #${booking.id} for analysis`);
   };
 
   useEffect(() => {
@@ -582,11 +599,19 @@ const AdminDashboard = () => {
             </div>
           )}
 
-          {/* Bookings Tab */}
+          {/* Bookings Tab - ✅ Updated with selection functionality */}
           {activeTab === 'bookings' && (
             <div className="tab-pane active">
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <h4>Bookings</h4>
+                {selectedBookingForTabs && (
+                  <div className="alert alert-info mb-0 py-2 px-3">
+                    <small>
+                      <i className="fas fa-info-circle me-2"></i>
+                      Selected Booking #{selectedBookingForTabs} for analysis
+                    </small>
+                  </div>
+                )}
               </div>
               {bookingLoading ? (
                 <div>Loading...</div>
@@ -605,18 +630,41 @@ const AdminDashboard = () => {
                   </thead>
                   <tbody>
                     {bookingList.map((booking) => (
-                      <tr key={booking.id}>
+                      <tr 
+                        key={booking.id}
+                        className={selectedBookingForTabs === booking.id ? 'table-active' : ''}
+                      >
                         <td>{booking.id}</td>
                         <td>{booking.user?.name}</td>
                         <td>{booking.drone?.model}</td>
-                        <td>{booking.status}</td>
+                        <td>{getStatusBadge(booking.status)}</td>
                         <td>{new Date(booking.startTime).toLocaleString()}</td>
                         <td>{new Date(booking.endTime).toLocaleString()}</td>
                         <td>
-                          <button className="btn btn-sm btn-info me-2" onClick={() => handleViewBooking(booking)}>
+                          <button 
+                            className="btn btn-sm btn-info me-2" 
+                            onClick={() => handleViewBooking(booking)}
+                            title="View Details"
+                          >
                             <i className="fas fa-eye"></i>
                           </button>
-                          <button className="btn btn-sm btn-danger" onClick={() => handleDeleteBooking(booking)}>
+                          {/* ✅ Added button to select booking for analysis */}
+                          <button 
+                            className={`btn btn-sm me-2 ${
+                              selectedBookingForTabs === booking.id ? 'btn-success' : 'btn-warning'
+                            }`}
+                            onClick={() => handleSelectBookingForAnalysis(booking)}
+                            title="Analyze Penalties & Ratings"
+                          >
+                            <i className={`fas ${
+                              selectedBookingForTabs === booking.id ? 'fa-check' : 'fa-chart-line'
+                            }`}></i>
+                          </button>
+                          <button 
+                            className="btn btn-sm btn-danger" 
+                            onClick={() => handleDeleteBooking(booking)}
+                            title="Delete Booking"
+                          >
                             <i className="fas fa-trash"></i>
                           </button>
                         </td>
@@ -625,6 +673,31 @@ const AdminDashboard = () => {
                   </tbody>
                 </table>
               )}
+
+              {/* ✅ Show selected booking info */}
+              {selectedBookingForTabs && (
+                <div className="mt-3 p-3 bg-light rounded">
+                  <div className="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h6 className="mb-0">
+                        <i className="fas fa-analytics me-2"></i>
+                        Analyzing Booking #{selectedBookingForTabs}
+                      </h6>
+                      <small className="text-muted">
+                        Penalties, ratings, and revenue data will be shown below
+                      </small>
+                    </div>
+                    <button 
+                      className="btn btn-sm btn-outline-secondary"
+                      onClick={() => setSelectedBookingForTabs(null)}
+                    >
+                      <i className="fas fa-times me-1"></i>
+                      Clear Selection
+                    </button>
+                  </div>
+                </div>
+              )}
+
               <BookingModal
                 open={showBookingModal}
                 onClose={() => setShowBookingModal(false)}
@@ -634,10 +707,33 @@ const AdminDashboard = () => {
             </div>
           )}
         </div>
-        <PenaltyRatingRevenueTabs />
+
+        {/* ✅ Updated PenaltyRatingRevenueTabs with conditional rendering and bookingId prop */}
+        {selectedBookingForTabs ? (
+          <div className="mt-4">
+            <div className="card card-custom">
+              <div className="card-header">
+                <h5 className="mb-0">
+                  <i className="fas fa-chart-pie me-2"></i>
+                  Analysis for Booking #{selectedBookingForTabs}
+                </h5>
+              </div>
+              <div className="card-body">
+                <PenaltyRatingRevenueTabs bookingId={selectedBookingForTabs} />
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-4">
+            <div className="alert alert-info">
+              <i className="fas fa-info-circle me-2"></i>
+              <strong>Select a booking</strong> from the Bookings tab to view detailed penalties, ratings, and revenue analysis.
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
-export default AdminDashboard; 
+export default AdminDashboard;
