@@ -7,32 +7,33 @@
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f8f9fa;
+  background-color: #f5f5f5;
   color: #333;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
 /* Custom CSS Variables */
 :root {
-  --primary-color: #2563eb;
+  --primary-color: #292929;
   --secondary-color: #64748b;
-  --accent-color: #f59e0b;
+  --accent-color: #292929;
   --success-color: #10b981;
   --danger-color: #ef4444;
   --warning-color: #f59e0b;
   --info-color: #3b82f6;
-  --light-color: #f8f9fa;
+  --light-color: #f5f5f5;
   --dark-color: #1e293b;
   --border-radius: 8px;
   --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --transition: all 0.3s ease;
+   --dark-color: #2d2d2d;      /* Grey background for footer */
+  --accent-color: #f15b2a;    /* Orange for section headings */
   --transition: all 0.3s ease;
 }
 
@@ -53,8 +54,8 @@ code {
 }
 
 .btn-primary-custom:hover {
-  background-color: #1d4ed8;
-  border-color: #1d4ed8;
+  background-color: #1a1a1a;
+  border-color: #1a1a1a;
   transform: translateY(-2px);
   box-shadow: var(--box-shadow);
 }
@@ -73,34 +74,42 @@ code {
 
 /* Navigation Styles */
 .navbar-custom {
-  background: linear-gradient(135deg, var(--primary-color) 0%, #1d4ed8 100%);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #f5f5f5;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.navbar-brand {
+/* Brand Title (SkyFleet Rentals) */
+.navbar-custom .navbar-brand {
   font-weight: 700;
-  font-size: 1.5rem;
+  font-size: 1.9rem; /* Increased from 1.5rem */
+  color: #e76f51 !important;
 }
+
+/* Nav Links (Home, Browse Drones, etc.) */
+.navbar-custom .navbar-nav .nav-link {
+  color: #000 !important;
+  font-size: 1.2rem;  /* Increased from default */
+  padding: 0.75rem 1rem; /* Bigger clickable area */
+}
+
+.navbar-custom .navbar-nav .nav-link:hover {
+  color: #e76f51 !important;
+}
+
 
 /* Hero Section */
 .hero-section {
-  background: linear-gradient(135deg, var(--primary-color) 0%, #1d4ed8 100%);
-  color: white;
+  background-color: #f5f5f5; /* Same as navbar */
+  color: #000; /* Black text for contrast */
   padding: 80px 0;
   position: relative;
   overflow: hidden;
 }
 
 .hero-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-  opacity: 0.3;
+  display: none; /* Remove the grain texture */
 }
+
 
 /* Drone Card Styles */
 .drone-card {
@@ -129,15 +138,16 @@ code {
   color: var(--secondary-color);
 }
 
+
 /* Footer Styles */
 .footer {
-  background-color: var(--dark-color);
+  background-color: var(--dark-color); /* Grey background */
   color: white;
   padding: 40px 0 20px;
 }
 
 .footer h5 {
-  color: var(--accent-color);
+  color: var(--accent-color); /* Orange headings */
   margin-bottom: 1rem;
 }
 
@@ -150,6 +160,7 @@ code {
 .footer a:hover {
   color: white;
 }
+
 
 /* Loading Spinner */
 .loading-spinner {
@@ -164,7 +175,7 @@ code {
   .hero-section {
     padding: 60px 0;
   }
-  
+
   .navbar-brand {
     font-size: 1.25rem;
   }
@@ -210,7 +221,7 @@ code {
 /* Form Styles */
 .form-control:focus {
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
+  box-shadow: 0 0 0 0.2rem rgba(255, 77, 48, 0.25);
 }
 
 /* Button Groups */
@@ -227,4 +238,54 @@ code {
   padding: 0.5rem 1rem;
   border-radius: 20px;
   font-weight: 500;
-} 
+}
+
+/* Orange Theme Classes */
+.text-orange {
+  color: #e76f51 !important;
+}
+
+.btn.btn-orange {
+  background-color: #e76f51 !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: var(--border-radius) !important;
+  transition: var(--transition) !important;
+}
+
+.btn.btn-orange:hover {
+  background-color: #d75d40 !important;
+  color: #fff !important;
+}
+
+
+.btn-outline-orange {
+  background-color: transparent;
+  color: #e76f51;
+  border: 2px solid #e76f51;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+}
+
+.btn-outline-orange:hover {
+  background-color: #e76f51;
+  color: #fff !important;
+}
+
+/* LOGIN LINK STYLING */
+.login-link {
+  color: #000 !important;
+  transition: color 0.3s ease;
+}
+
+.login-link:hover {
+  color: #e76f51 !important; /* Your orange */
+}
+
+/* Navbar Button Styling (Login/Register) */
+.navbar-custom .btn {
+  font-size: 1.05rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--border-radius);
+  line-height: 1.5;
+}

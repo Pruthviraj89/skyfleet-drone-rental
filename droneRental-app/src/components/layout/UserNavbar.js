@@ -48,7 +48,7 @@ const UserNavbar = () => {
             {/* Browse Drones */}
             <li className="nav-item">
               <Link className={`nav-link ${isActive('/drones')}`} to="/drones">
-                <i className="fas fa-drone me-1"></i>
+               
                 Browse Drones
               </Link>
             </li>
@@ -56,7 +56,7 @@ const UserNavbar = () => {
             {/* My Bookings */}
             <li className="nav-item">
               <Link className={`nav-link ${isActive('/my-bookings')}`} to="/my-bookings">
-                <i className="fas fa-calendar-check me-1"></i>
+            
                 My Bookings
               </Link>
             </li>
@@ -64,7 +64,7 @@ const UserNavbar = () => {
             {/* My Profile */}
             <li className="nav-item">
               <Link className={`nav-link ${isActive('/profile')}`} to="/profile">
-                <i className="fas fa-user me-1"></i>
+                
                 Profile
               </Link>
             </li>
@@ -72,7 +72,7 @@ const UserNavbar = () => {
             {/* Favorites */}
             <li className="nav-item">
               <Link className={`nav-link ${isActive('/favorites')}`} to="/favorites">
-                <i className="fas fa-heart me-1"></i>
+                
                 Favorites
               </Link>
             </li>
@@ -80,7 +80,7 @@ const UserNavbar = () => {
             {/* Booking History */}
             <li className="nav-item">
               <Link className={`nav-link ${isActive('/booking-history')}`} to="/booking-history">
-                <i className="fas fa-history me-1"></i>
+                
                 History
               </Link>
             </li>
@@ -88,7 +88,7 @@ const UserNavbar = () => {
             {/* Payment History */}
             <li className="nav-item">
               <Link className={`nav-link ${isActive('/payment-history')}`} to="/payment-history">
-                <i className="fas fa-credit-card me-1"></i>
+               
                 Payments
               </Link>
             </li>
@@ -149,7 +149,7 @@ const UserNavbar = () => {
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                <i className="fas fa-user-circle me-1"></i>
+               
                 {user?.name || 'User'}
               </a>
               <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">

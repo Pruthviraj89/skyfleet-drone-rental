@@ -16,6 +16,11 @@ import MyBookings from './components/user_pages/MyBookings';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import AdminDashboard from './components/admin/AdminDashboard';
+import Contact from './components/public_users/Contact';
+import About from './components/public_users/About';
+import Help from './components/public_users/Help';
+import Term from './components/public_users/Term';
+import PrivacyPolicy from './components/public_users/PrivacyPolicy';
 
 // Import admin pages
 import UsersPage from './components/admin/UsersPage';
@@ -39,6 +44,11 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/about" element={<About />} /> 
+                <Route path="/help" element={<Help />} />
+                <Route path="/term" element={<Term />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
                 
                 {/* User Routes - Protected for authenticated users */}
                 <Route path="/drones" element={

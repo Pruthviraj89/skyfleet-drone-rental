@@ -12,11 +12,10 @@ const PublicNavbar = () => {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark navbar-custom">
+    <nav className="navbar navbar-expand-lg navbar-light navbar-custom">
       <div className="container">
         {/* Brand */}
-        <Link className="navbar-brand" to="/">
-          <i className="fas fa-drone me-2"></i>
+        <Link className="navbar-brand text-orange" to="/">
           SkyFleet Rentals
         </Link>
 
@@ -27,7 +26,7 @@ const PublicNavbar = () => {
           data-bs-toggle="collapse"
           data-bs-target="#publicNavbarNav"
           aria-controls="publicNavbarNav"
-          aria-expanded={!isNavCollapsed ? true : false}
+          aria-expanded={!isNavCollapsed}
           aria-label="Toggle navigation"
           onClick={handleNavCollapse}
         >
@@ -36,75 +35,34 @@ const PublicNavbar = () => {
 
         {/* Navigation Links */}
         <div className={`${isNavCollapsed ? 'collapse' : ''} navbar-collapse`} id="publicNavbarNav">
-          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-            {/* Home */}
-            <li className="nav-item">
-              <Link className={`nav-link ${isActive('/')}`} to="/">
-                <i className="fas fa-home me-1"></i>
-                Home
-              </Link>
+          <ul className="navbar-nav ms-4 me-auto mb-2 mb-lg-0">
+            <li className="nav-item mx-3">
+              <Link className={`nav-link ${isActive('/')}`} to="/">Home</Link>
             </li>
-
-            {/* Browse Drones */}
-            <li className="nav-item">
-              <Link className={`nav-link ${isActive('/drones')}`} to="/drones">
-                <i className="fas fa-drone me-1"></i>
-                Browse Drones
-              </Link>
+            <li className="nav-item mx-3">
+              <Link className={`nav-link ${isActive('/about')}`} to="/about">About</Link>
             </li>
-
-            {/* About */}
-            <li className="nav-item">
-              <Link className={`nav-link ${isActive('/about')}`} to="/about">
-                <i className="fas fa-info-circle me-1"></i>
-                About
-              </Link>
+            <li className="nav-item mx-3">
+              <Link className={`nav-link ${isActive('/contact')}`} to="/contact">Contact</Link>
             </li>
-
-            {/* Services */}
-            <li className="nav-item">
-              <Link className={`nav-link ${isActive('/services')}`} to="/services">
-                <i className="fas fa-cogs me-1"></i>
-                Services
-              </Link>
-            </li>
-
-            {/* Contact */}
-            <li className="nav-item">
-              <Link className={`nav-link ${isActive('/contact')}`} to="/contact">
-                <i className="fas fa-envelope me-1"></i>
-                Contact
-              </Link>
-            </li>
-
-            {/* Help */}
-            <li className="nav-item">
-              <Link className={`nav-link ${isActive('/help')}`} to="/help">
-                <i className="fas fa-question-circle me-1"></i>
-                Help
-              </Link>
+            <li className="nav-item mx-3">
+              <Link className={`nav-link ${isActive('/help')}`} to="/help">Help</Link>
             </li>
           </ul>
 
-          {/* Authentication Buttons */}
-          <ul className="navbar-nav">
-            <li className="nav-item">
-              <Link className="nav-link" to="/login">
-                <i className="fas fa-sign-in-alt me-1"></i>
-                Login
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="btn btn-outline-light btn-sm ms-2" to="/register">
-                <i className="fas fa-user-plus me-1"></i>
-                Register
-              </Link>
-            </li>
-          </ul>
+          {/* Auth Buttons */}
+          <div className="d-flex align-items-center">
+            <Link className="nav-link login-link me-4" to="/login">
+              Login
+            </Link>
+            <Link to="/register" className="btn btn-orange text-white px-4 py-2" style={{ backgroundColor: '#e76f51' }}>
+              Register
+            </Link>
+          </div>
         </div>
       </div>
     </nav>
   );
 };
 
-export default PublicNavbar; 
+export default PublicNavbar;

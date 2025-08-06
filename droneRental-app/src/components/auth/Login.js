@@ -10,7 +10,6 @@ const Login = () => {
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
 
-  // Get the intended destination from location state or default to home
   const from = location.state?.from?.pathname || '/';
 
   const initialValues = {
@@ -19,22 +18,15 @@ const Login = () => {
   };
 
   const validationSchema = Yup.object({
-    email: Yup.string()
-      .email('Invalid email address')
-      .required('Email is required'),
-    password: Yup.string()
-      .min(6, 'Password must be at least 6 characters')
-      .required('Password is required')
+    email: Yup.string().email('Invalid email address').required('Email is required'),
+    password: Yup.string().min(6, 'Password must be at least 6 characters').required('Password is required')
   });
 
   const handleSubmit = async (values, { setSubmitting, setFieldError }) => {
     setIsLoading(true);
     try {
       const success = await login(values.email, values.password);
-      if (success) {
-        navigate(from, { replace: true });
-        console.log(navigate);
-      }
+      if (success) navigate(from, { replace: true });
     } catch (error) {
       if (error.response?.data?.errors) {
         error.response.data.errors.forEach(err => {
@@ -48,129 +40,118 @@ const Login = () => {
   };
 
   return (
-    <div className="login-page py-5">
+    <div className="login-page py-5" style={{ backgroundColor: '#f5f5f5', minHeight: '100vh' }}>
       <div className="container">
-        <div className="row justify-content-center">
-          <div className="col-md-6 col-lg-5">
-            <div className="card card-custom">
-              <div className="card-header text-center bg-primary-custom text-white">
-                <h3 className="mb-0">
-                  <i className="fas fa-sign-in-alt me-2"></i>
-                  Welcome Back
-                </h3>
-                <p className="mb-0 mt-2">Sign in to your SkyFleet Rentals account</p>
+        <div className="row">
+
+          {/* Left Panel */}
+          <div className="col-md-4">
+            <div
+              className="p-4 text-white rounded shadow position-sticky"
+              style={{
+                backgroundColor: '#e76f51',
+                top: '100px',
+                minHeight: '500px'
+              }}
+            >
+              <h2 className="fw-bold mb-3">Welcome Back to SkyFleet</h2>
+              <p>Sign in and continue your drone journey with us.</p>
+              <ul className="list-unstyled fs-6 mt-4">
+                <li className="mb-2"><i className="fas fa-check-circle me-2"></i>Easy access to your rentals</li>
+                <li className="mb-2"><i className="fas fa-check-circle me-2"></i>24/7 support at your service</li>
+                <li className="mb-2"><i className="fas fa-check-circle me-2"></i>Secure, fast & reliable login</li>
+              </ul>
+              <div className="text-center mt-4">
+                <img src="/assets/img/blackdrone.png" alt="Drone" className="img-fluid" style={{ maxHeight: '300px' }} />
               </div>
-              <div className="card-body p-4">
-                <Formik
-                  initialValues={initialValues}
-                  validationSchema={validationSchema}
-                  onSubmit={handleSubmit}
-                >
+            </div>
+          </div>
+
+          {/* Right Form */}
+          <div className="col-md-8">
+            <div className="card shadow border-0 p-4 bg-white">
+              <div className="card-header text-center text-white mb-3" style={{ backgroundColor: '#e76f51' }}>
+                <h3 className="mb-0">Login to Your Account</h3>
+                <p className="mb-0 mt-2">Access SkyFleet Rentals dashboard</p>
+              </div>
+
+              <div className="card-body p-0">
+                <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
                   {({ isSubmitting, errors, touched }) => (
                     <Form>
-                      {/* Email Field */}
+                      {/* Email */}
                       <div className="mb-3">
                         <label htmlFor="email" className="form-label fw-bold">
-                          <i className="fas fa-envelope me-2"></i>
-                          Email Address
+                          <i className="fas fa-envelope me-2"></i>Email Address
                         </label>
                         <Field
                           type="email"
                           id="email"
                           name="email"
-                          className={`form-control ${
-                            errors.email && touched.email ? 'is-invalid' : ''
-                          }`}
                           placeholder="Enter your email"
+                          className={`form-control ${errors.email && touched.email ? 'is-invalid' : ''}`}
                         />
                         <ErrorMessage name="email" component="div" className="invalid-feedback" />
                       </div>
 
-                      {/* Password Field */}
+                      {/* Password */}
                       <div className="mb-3">
                         <label htmlFor="password" className="form-label fw-bold">
-                          <i className="fas fa-lock me-2"></i>
-                          Password
+                          <i className="fas fa-lock me-2"></i>Password
                         </label>
                         <Field
                           type="password"
                           id="password"
                           name="password"
-                          className={`form-control ${
-                            errors.password && touched.password ? 'is-invalid' : ''
-                          }`}
                           placeholder="Enter your password"
+                          className={`form-control ${errors.password && touched.password ? 'is-invalid' : ''}`}
                         />
                         <ErrorMessage name="password" component="div" className="invalid-feedback" />
                       </div>
 
-                      {/* Remember Me & Forgot Password */}
+                      {/* Remember + Forgot */}
                       <div className="row mb-3">
                         <div className="col-6">
                           <div className="form-check">
-                            <Field
-                              type="checkbox"
-                              id="rememberMe"
-                              name="rememberMe"
-                              className="form-check-input"
-                            />
-                            <label className="form-check-label" htmlFor="rememberMe">
-                              Remember me
-                            </label>
+                            <Field type="checkbox" id="rememberMe" name="rememberMe" className="form-check-input" />
+                            <label className="form-check-label" htmlFor="rememberMe">Remember me</label>
                           </div>
                         </div>
                         <div className="col-6 text-end">
-                          <Link to="/forgot-password" className="text-decoration-none">
-                            Forgot Password?
-                          </Link>
+                          <Link to="/forgot-password" className="text-decoration-none">Forgot Password?</Link>
                         </div>
                       </div>
 
-                      {/* Submit Button */}
+                      {/* Submit */}
                       <div className="d-grid mb-3">
                         <button
                           type="submit"
-                          className="btn btn-primary-custom btn-lg"
+                          className="btn btn-orange btn-lg"
                           disabled={isSubmitting || isLoading}
                         >
                           {isLoading ? (
-                            <>
-                              <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                              Signing In...
-                            </>
+                            <><span className="spinner-border spinner-border-sm me-2"></span>Signing In...</>
                           ) : (
-                            <>
-                              <i className="fas fa-sign-in-alt me-2"></i>
-                              Sign In
-                            </>
+                            <><i className="fas fa-sign-in-alt me-2"></i>Sign In</>
                           )}
                         </button>
                       </div>
 
                       {/* Divider */}
-                      <div className="text-center mb-3">
-                        <span className="text-muted">or</span>
-                      </div>
+                      <div className="text-center text-muted mb-3">or</div>
 
-                      {/* Social Login Buttons */}
+                      {/* Socials */}
                       <div className="d-grid gap-2 mb-3">
                         <button type="button" className="btn btn-outline-dark">
-                          <i className="fab fa-google me-2"></i>
-                          Continue with Google
+                          <i className="fab fa-google me-2"></i>Sign in with Google
                         </button>
-                        <button type="button" className="btn btn-outline-primary">
-                          <i className="fab fa-facebook-f me-2"></i>
-                          Continue with Facebook
-                        </button>
+                        
                       </div>
 
-                      {/* Register Link */}
+                      {/* Register */}
                       <div className="text-center">
                         <p className="mb-0">
-                          Don't have an account?{' '}
-                          <Link to="/register" className="text-decoration-none fw-bold">
-                            Sign up here
-                          </Link>
+                          Don’t have an account? <Link to="/register" className="fw-bold text-orange">Sign up here</Link>
                         </p>
                       </div>
                     </Form>
@@ -179,29 +160,9 @@ const Login = () => {
               </div>
             </div>
 
-            {/* Additional Info */}
-            <div className="text-center mt-4">
-              <div className="row">
-                <div className="col-md-4 mb-2">
-                  <div className="d-flex align-items-center justify-content-center">
-                    <i className="fas fa-shield-alt text-success me-2"></i>
-                    <small className="text-muted">Secure Login</small>
-                  </div>
-                </div>
-                <div className="col-md-4 mb-2">
-                  <div className="d-flex align-items-center justify-content-center">
-                    <i className="fas fa-clock text-info me-2"></i>
-                    <small className="text-muted">24/7 Support</small>
-                  </div>
-                </div>
-                <div className="col-md-4 mb-2">
-                  <div className="d-flex align-items-center justify-content-center">
-                    <i className="fas fa-mobile-alt text-warning me-2"></i>
-                    <small className="text-muted">Mobile Friendly</small>
-                  </div>
-                </div>
-              </div>
-            </div>
+            
+              
+
           </div>
         </div>
       </div>
@@ -209,4 +170,4 @@ const Login = () => {
   );
 };
 
-export default Login; 
+export default Login;

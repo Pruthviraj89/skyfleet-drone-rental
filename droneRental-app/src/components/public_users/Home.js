@@ -17,7 +17,6 @@ const Home = () => {
       setFeaturedDrones(response.data.content || response.data);
     } catch (error) {
       console.error('Error fetching featured drones:', error);
-      // Use mock data for demo
       setFeaturedDrones([
         {
           id: 1,
@@ -90,45 +89,52 @@ const Home = () => {
 
   return (
     <div className="home-page">
+
       {/* Hero Section */}
-      <section className="hero-section text-white text-center py-5">
-        <div className="container">
-          <div className="row align-items-center min-vh-75">
-            <div className="col-lg-8 mx-auto">
-              <h1 className="display-3 fw-bold mb-4">
-                <i className="fas fa-drone me-3"></i>
-                SkyFleet Rentals
+      <section className="hero-section py-5 bg-light-grey">
+        <div className="container-fluid">
+          <div className="row align-items-center">
+            <div className="col-md-6 px-5 text-md-start text-center mb-4 mb-md-0">
+              <h4 className="text-dark mb-3">“Rent Drones - Fly Smarter”</h4>
+              <h3 className="mb-4 text-black">
+                Save <span className="text-orange">big</span> with our Drone Rental
+              </h3>
+              <h1 className="display-2 fw-bold mb-4 text-orange">
+                <i className="fas fa-drone me-2"></i>SkyFleet Rentals
               </h1>
-              <p className="lead mb-4">
-                Experience the future of aerial technology with our premium drone rental service. 
-                Professional drones for every need, from photography to industrial applications.
+              <p className="lead text-dark mb-3">
+                Rent the drone of your dreams. Unbeatable prices, high-resolution footage,
+                flexible rental options and much more.
               </p>
-              <div className="d-flex justify-content-center gap-3 flex-wrap">
-                <Link to="/drones" className="btn btn-primary-custom btn-lg">
-                  <i className="fas fa-search me-2"></i>
-                  Browse Drones
-                </Link>
-                <Link to="/register" className="btn btn-outline-light btn-lg">
-                  <i className="fas fa-user-plus me-2"></i>
-                  Get Started
-                </Link>
+              <div className="d-flex flex-wrap gap-3 justify-content-md-start justify-content-center">
+                <Link to="/register" className="btn btn-orange btn-lg">Get Started</Link>
+                <Link to="/about" className="btn btn-dark btn-lg text-white">Learn More</Link>
               </div>
+            </div>
+
+            <div className="col-md-6 px-0">
+              <img
+                src="/assets/img/homedrone.png"
+                alt="Drone"
+                className="img-fluid w-100"
+                style={{ height: '520px', objectFit: 'cover' }}
+              />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Statistics Section */}
-      <section className="stats-section py-5 bg-light">
+      {/* Statistics */}
+      <section className="stats-section py-5 bg-light-grey">
         <div className="container">
           <div className="row">
             {stats.map((stat, index) => (
               <div key={index} className="col-md-3 col-6 mb-4">
                 <div className="text-center">
                   <div className="stat-icon mb-3">
-                    <i className={`${stat.icon} fa-2x text-primary-custom`}></i>
+                    <i className={`${stat.icon} fa-2x text-orange`}></i>
                   </div>
-                  <h3 className="fw-bold text-primary-custom mb-1">{stat.number}</h3>
+                  <h3 className="fw-bold text-orange mb-1">{stat.number}</h3>
                   <p className="text-muted mb-0">{stat.label}</p>
                 </div>
               </div>
@@ -137,8 +143,10 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Services Section */}
-      <section className="services-section py-5">
+      <hr />
+
+      {/* Services */}
+      <section className="services-section py-5 bg-light-grey">
         <div className="container">
           <div className="row mb-5">
             <div className="col-12 text-center">
@@ -154,7 +162,7 @@ const Home = () => {
                 <div className="card card-custom h-100 text-center">
                   <div className="card-body">
                     <div className="service-icon mb-3">
-                      <i className={`${service.icon} fa-3x text-primary-custom`}></i>
+                      <i className={`${service.icon} fa-3x text-orange`}></i>
                     </div>
                     <h5 className="card-title">{service.title}</h5>
                     <p className="card-text text-muted">{service.description}</p>
@@ -166,8 +174,8 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Featured Drones Section */}
-      <section className="featured-drones-section py-5 bg-light">
+      {/* Featured Drones */}
+      <section className="featured-drones-section py-5 bg-light-grey">
         <div className="container">
           <div className="row mb-5">
             <div className="col-12 text-center">
@@ -177,10 +185,10 @@ const Home = () => {
               </p>
             </div>
           </div>
-          
+
           {loading ? (
             <div className="text-center">
-              <div className="spinner-border text-primary" role="status">
+              <div className="spinner-border text-orange" role="status">
                 <span className="visually-hidden">Loading...</span>
               </div>
             </div>
@@ -200,14 +208,14 @@ const Home = () => {
                     <div className="card-body d-flex flex-column">
                       <div className="d-flex justify-content-between align-items-start mb-2">
                         <h5 className="card-title mb-0">{drone.brand} {drone.model}</h5>
-                        <span className="badge bg-primary">{drone.brand}</span>
+                        <span className="badge bg-orange text-white">{drone.brand}</span>
                       </div>
-                      
+
                       <div className="mb-3">
                         <div className="row text-center">
                           <div className="col-6">
                             <small className="text-muted d-block">Price/Hour</small>
-                            <span className="fw-bold text-primary">${drone.pricePerHour}</span>
+                            <span className="fw-bold text-orange">${drone.pricePerHour}</span>
                           </div>
                           <div className="col-6">
                             <small className="text-muted d-block">Battery</small>
@@ -225,14 +233,14 @@ const Home = () => {
 
                       <div className="mt-auto">
                         <div className="d-flex justify-content-between align-items-center mb-2">
-                          <span className="drone-price">${drone.pricePerHour}/hour</span>
-                          <Link to={`/drones/${drone.id}`} className="btn btn-primary-custom btn-sm">
+                          <span className="drone-price text-orange">${drone.pricePerHour}/hour</span>
+                          <Link to={`/drones/${drone.id}`} className="btn btn-outline-dark btn-sm">
                             <i className="fas fa-info-circle me-1"></i>
                             Details
                           </Link>
                         </div>
                         {drone.status === 'available' && (
-                          <Link to={`/book/${drone.id}`} className="btn btn-success w-100">
+                          <Link to={`/book/${drone.id}`} className="btn btn-orange w-100">
                             <i className="fas fa-calendar-plus me-1"></i>
                             Book Now
                           </Link>
@@ -244,18 +252,28 @@ const Home = () => {
               ))}
             </div>
           )}
-          
-          <div className="text-center mt-4">
-            <Link to="/drones" className="btn btn-primary-custom btn-lg">
-              <i className="fas fa-drone me-2"></i>
-              View All Drones
-            </Link>
-          </div>
         </div>
       </section>
 
-      {/* Call to Action Section */}
-      <section className="cta-section py-5 text-white text-center">
+   {/* View All Drones Button */}
+<section className="bg-light-grey py-4">
+  <div className="container">
+    <div className="text-center">
+      <Link
+        to="/drones"
+        className="btn btn-dark btn-lg text-white"
+        style={{ backgroundColor: '#444' }} 
+      >
+        <i className="fas fa-drone me-2"></i>
+        View All Drones
+      </Link>
+    </div>
+  </div>
+</section>
+
+
+      {/* CTA */}
+      <section className="cta-section py-5 text-white text-center" style={{ backgroundColor: '#e76f51' }}>
         <div className="container">
           <div className="row">
             <div className="col-lg-8 mx-auto">
@@ -264,23 +282,13 @@ const Home = () => {
                 Join thousands of satisfied customers who trust SkyFleet Rentals for their aerial needs. 
                 Start your journey today with our professional drone rental service.
               </p>
-              <div className="d-flex justify-content-center gap-3 flex-wrap">
-                <Link to="/register" className="btn btn-primary-custom btn-lg">
-                  <i className="fas fa-user-plus me-2"></i>
-                  Create Account
-                </Link>
-                <Link to="/drones" className="btn btn-outline-light btn-lg">
-                  <i className="fas fa-search me-2"></i>
-                  Explore Drones
-                </Link>
-              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="features-section py-5">
+      {/* Features */}
+      <section className="features-section py-5 bg-light-grey">
         <div className="container">
           <div className="row mb-5">
             <div className="col-12 text-center">
@@ -294,7 +302,7 @@ const Home = () => {
             <div className="col-lg-4 mb-4">
               <div className="text-center">
                 <div className="feature-icon mb-3">
-                  <i className="fas fa-shield-alt fa-3x text-primary-custom"></i>
+                  <i className="fas fa-shield-alt fa-3x text-orange"></i>
                 </div>
                 <h5>Safe & Reliable</h5>
                 <p className="text-muted">
@@ -305,7 +313,7 @@ const Home = () => {
             <div className="col-lg-4 mb-4">
               <div className="text-center">
                 <div className="feature-icon mb-3">
-                  <i className="fas fa-headset fa-3x text-primary-custom"></i>
+                  <i className="fas fa-headset fa-3x text-orange"></i>
                 </div>
                 <h5>24/7 Support</h5>
                 <p className="text-muted">
@@ -316,7 +324,7 @@ const Home = () => {
             <div className="col-lg-4 mb-4">
               <div className="text-center">
                 <div className="feature-icon mb-3">
-                  <i className="fas fa-credit-card fa-3x text-primary-custom"></i>
+                  <i className="fas fa-credit-card fa-3x text-orange"></i>
                 </div>
                 <h5>Flexible Pricing</h5>
                 <p className="text-muted">
@@ -327,8 +335,9 @@ const Home = () => {
           </div>
         </div>
       </section>
+
     </div>
   );
 };
 
-export default Home; 
+export default Home;

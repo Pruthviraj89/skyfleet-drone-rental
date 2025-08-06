@@ -24,7 +24,7 @@ const AdminNavbar = () => {
       <div className="container">
         {/* Brand */}
         <Link className="navbar-brand" to="/admin">
-          <i className="fas fa-cog me-2"></i>
+          
           SkyFleet Admin
         </Link>
 
@@ -48,7 +48,7 @@ const AdminNavbar = () => {
             {/* Dashboard */}
             <li className="nav-item">
               <Link className={`nav-link ${isActive('/admin')}`} to="/admin">
-                <i className="fas fa-tachometer-alt me-1"></i>
+               
                 Dashboard
               </Link>
             </li>
@@ -56,7 +56,7 @@ const AdminNavbar = () => {
             {/* Users Management */}
             <li className="nav-item">
               <Link className={`nav-link ${isActive('/admin/users')}`} to="/admin/users">
-                <i className="fas fa-users me-1"></i>
+              
                 Users
               </Link>
             </li>
@@ -64,7 +64,7 @@ const AdminNavbar = () => {
             {/* Drones Management */}
             <li className="nav-item">
               <Link className={`nav-link ${isActive('/admin/drones')}`} to="/admin/drones">
-                <i className="fas fa-drone me-1"></i>
+              
                 Drones
               </Link>
             </li>
@@ -72,7 +72,7 @@ const AdminNavbar = () => {
             {/* Bookings Management */}
             <li className="nav-item">
               <Link className={`nav-link ${isActive('/admin/bookings')}`} to="/admin/bookings">
-                <i className="fas fa-calendar-check me-1"></i>
+              
                 Bookings
               </Link>
             </li>
@@ -80,7 +80,7 @@ const AdminNavbar = () => {
             {/* Penalties Management */}
             <li className="nav-item">
               <Link className={`nav-link ${isActive('/admin/penalties')}`} to="/admin/penalties">
-                <i className="fas fa-exclamation-triangle me-1"></i>
+               
                 Penalties
               </Link>
             </li>
@@ -88,7 +88,7 @@ const AdminNavbar = () => {
             {/* Ratings Management */}
             <li className="nav-item">
               <Link className={`nav-link ${isActive('/admin/ratings')}`} to="/admin/ratings">
-                <i className="fas fa-star me-1"></i>
+                
                 Ratings
               </Link>
             </li>
@@ -96,7 +96,7 @@ const AdminNavbar = () => {
             {/* Payments Management */}
             <li className="nav-item">
               <Link className={`nav-link ${isActive('/admin/payments')}`} to="/admin/payments">
-                <i className="fas fa-credit-card me-1"></i>
+               
                 Payments
               </Link>
             </li>
@@ -157,7 +157,7 @@ const AdminNavbar = () => {
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                <i className="fas fa-user-circle me-1"></i>
+              
                 {user?.name || 'Admin'}
               </a>
               <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="adminUserDropdown">
