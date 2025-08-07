@@ -30,18 +30,15 @@ const authReducer =  (state, action) => {
     case AUTH_ACTIONS.LOGIN_SUCCESS:
     case AUTH_ACTIONS.REGISTER_SUCCESS:
       localStorage.setItem('token', action.payload.token);
-      const decoded = jwtDecode(action.payload.token);
-      //const decoded = await api.get('/api/users/profile');
-      console.log("this is decode");
-      console.log(decoded);
-      const user={
-
-        role: decoded.role,
-        name:decoded.sub,
-        email:decoded.sub,
-        id: decoded.userId
-      };
-      console.log(decoded);
+      const user = action.payload.user ? action.payload.user : (() => {
+        const decoded = jwtDecode(action.payload.token);
+        return {
+          role: decoded.role,
+          name: decoded.sub,
+          email: decoded.sub,
+          id: decoded.userId
+        };
+      })();
       return {
         ...state,
         token: action.payload.token,
@@ -140,18 +137,30 @@ export const AuthProvider = ({ children }) => {
       // Set auth token header for future requests
       api.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
 
+      // Fetch user profile to get the real name
+      const profileResponse = await api.get('/api/users/profile');
+      const userProfile = profileResponse.data;
+
       dispatch({
         type: AUTH_ACTIONS.LOGIN_SUCCESS,
-        payload: response.data
+        payload: {
+          token: response.data.token,
+          user: {
+            role: userProfile.role,
+            name: userProfile.name,
+            email: userProfile.email,
+            id: userProfile.id
+          }
+        }
       });
 
       toast.success('Login successful!');
-      return true;
+      return { success: true, role: userProfile.role };
     } catch (error) {
       const message = error.response?.data?.message || 'Login failed';
       toast.error(message);
       dispatch({ type: AUTH_ACTIONS.LOGIN_FAIL });
-      return false;
+      return { success: false, role: null };
     }
   };
 

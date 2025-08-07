@@ -3,7 +3,7 @@ import { ratingAPI } from '../../services/api';
 import { toast } from 'react-toastify';
 
 const RatingModal = ({ open, onClose, booking, onRatingSuccess }) => {
-  const [rating, setRating] = useState(5);
+  const [rating, setRating] = useState('FIVE');
   const [comment, setComment] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
@@ -40,12 +40,12 @@ const RatingModal = ({ open, onClose, booking, onRatingSuccess }) => {
           <form onSubmit={handleSubmit}>
             <div className="modal-body">
               <div className="mb-3 text-center">
-                {[1, 2, 3, 4, 5].map((star) => (
+                {[{label:'ONE',val:1},{label:'TWO',val:2},{label:'THREE',val:3},{label:'FOUR',val:4},{label:'FIVE',val:5}].map((star) => (
                   <i
-                    key={star}
-                    className={`fa-star fa-2x me-1 ${star <= rating ? 'fas text-warning' : 'far text-secondary'}`}
+                    key={star.label}
+                    className={`fa-star fa-2x me-1 ${star.val <= (['ONE','TWO','THREE','FOUR','FIVE'].indexOf(rating)+1) ? 'fas text-warning' : 'far text-secondary'}`}
                     style={{ cursor: 'pointer' }}
-                    onClick={() => setRating(star)}
+                    onClick={() => setRating(star.label)}
                   ></i>
                 ))}
               </div>

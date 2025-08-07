@@ -255,7 +255,7 @@ const DronesPage = () => {
 
               {filteredDrones.length === 0 && (
                 <div className="text-center py-4">
-                  <i className="fas fa-drone fa-3x text-muted mb-3"></i>
+                  <i className="fas fa-drone"></i>
                   <p className="text-muted">No drones found</p>
                 </div>
               )}

@@ -23,8 +23,8 @@ const AdminNavbar = () => {
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container">
         {/* Brand */}
-        <Link className="navbar-brand" to="/admin">
-          
+        <Link className="navbar-brand fw-bold text-orange d-flex align-items-center" to="/admin">
+          <i className="fas fa-drone me-2" style={{ fontSize: '28px' }}></i>
           SkyFleet Admin
         </Link>
 

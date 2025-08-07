@@ -341,7 +341,7 @@ const AdminDashboard = () => {
           <div className="col-lg-3 col-md-6 mb-3">
             <div className="card card-custom text-center">
               <div className="card-body">
-                <i className="fas fa-drone fa-2x text-success mb-3"></i>
+                <i className="fas fa-drone fa-2x text-primary mb-3"></i>
                 <h3 className="fw-bold">{stats.totalDrones || 0}</h3>
                 <p className="text-muted mb-0">Total Drones</p>
               </div>

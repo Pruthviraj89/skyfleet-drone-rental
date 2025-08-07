@@ -23,10 +23,10 @@ const Navbar = () => {
     <nav className="navbar navbar-expand-lg navbar-dark navbar-custom">
       <div className="container">
         {/* Brand */}
-        <Link className="navbar-brand" to="/">
+        <h1 className="navbar-brand">
           <i className="fas fa-drone me-2"></i>
           SkyFleet Rentals
-        </Link>
+        </h1>
 
         {/* Mobile Toggle */}
         <button

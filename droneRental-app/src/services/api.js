@@ -167,6 +167,9 @@ export const undertakingAPI = {
 
 // API endpoints for ratings
 export const ratingAPI = {
+  // Get all ratings (admin only)
+  getAll: () => api.get("/api/ratings"),
+
   // Get ratings for a drone
   getByDrone: (droneId) => api.get(`/api/drones/ratings/${droneId}`),
 

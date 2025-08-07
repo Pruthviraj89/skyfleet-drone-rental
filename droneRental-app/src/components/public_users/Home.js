@@ -58,30 +58,30 @@ const Home = () => {
   };
 
   const stats = [
-    { icon: 'fas fa-drone', number: '50+', label: 'Drones Available' },
-    { icon: 'fas fa-users', number: '1000+', label: 'Happy Customers' },
-    { icon: 'fas fa-calendar-check', number: '5000+', label: 'Successful Rentals' },
-    { icon: 'fas fa-star', number: '4.8', label: 'Customer Rating' }
+    { icon: <i className="fas fa-drone" style={{ color: '#e76f51' }} />, number: '50+', label: 'Drones Available' },
+    { icon: <i className="fas fa-users" style={{ color: '#e76f51' }} />, number: '1000+', label: 'Happy Customers' },
+    { icon: <i className="fas fa-calendar-check" style={{ color: '#e76f51' }} />, number: '5000+', label: 'Successful Rentals' },
+    { icon: <i className="fas fa-star" style={{ color: '#e76f51' }} />, number: '4.8', label: 'Customer Rating' }
   ];
 
   const services = [
     {
-      icon: 'fas fa-camera',
+      icon: <i className="fas fa-drone" style={{ color: '#e76f51' }} />,
       title: 'Aerial Photography',
       description: 'Professional aerial photography for events, real estate, and commercial projects.'
     },
     {
-      icon: 'fas fa-video',
+      icon: <i className="fas fa-video" style={{ color: '#e76f51' }} />,
       title: 'Videography',
       description: 'High-quality video recording for films, documentaries, and marketing content.'
     },
     {
-      icon: 'fas fa-map',
+      icon: <i className="fas fa-map" style={{ color: '#e76f51' }} />,
       title: 'Mapping & Surveying',
       description: 'Precision mapping and surveying for construction, agriculture, and research.'
     },
     {
-      icon: 'fas fa-search',
+      icon: <i className="fas fa-search" style={{ color: '#e76f51' }} />,
       title: 'Inspection Services',
       description: 'Industrial inspection and monitoring for infrastructure and equipment.'
     }
@@ -100,7 +100,7 @@ const Home = () => {
                 Save <span className="text-orange">big</span> with our Drone Rental
               </h3>
               <h1 className="display-2 fw-bold mb-4 text-orange">
-                <i className="fas fa-drone me-2"></i>SkyFleet Rentals
+                <i className="fas fa-drone" />SkyFleet Rentals
               </h1>
               <p className="lead text-dark mb-3">
                 Rent the drone of your dreams. Unbeatable prices, high-resolution footage,
@@ -132,7 +132,7 @@ const Home = () => {
               <div key={index} className="col-md-3 col-6 mb-4">
                 <div className="text-center">
                   <div className="stat-icon mb-3">
-                    <i className={`${stat.icon} fa-2x text-orange`}></i>
+                    {stat.icon}
                   </div>
                   <h3 className="fw-bold text-orange mb-1">{stat.number}</h3>
                   <p className="text-muted mb-0">{stat.label}</p>
@@ -162,7 +162,7 @@ const Home = () => {
                 <div className="card card-custom h-100 text-center">
                   <div className="card-body">
                     <div className="service-icon mb-3">
-                      <i className={`${service.icon} fa-3x text-orange`}></i>
+                      {service.icon}
                     </div>
                     <h5 className="card-title">{service.title}</h5>
                     <p className="card-text text-muted">{service.description}</p>
@@ -264,7 +264,7 @@ const Home = () => {
         className="btn btn-dark btn-lg text-white"
         style={{ backgroundColor: '#444' }} 
       >
-        <i className="fas fa-drone me-2"></i>
+        <i className="fas fa-drone" />
         View All Drones
       </Link>
     </div>

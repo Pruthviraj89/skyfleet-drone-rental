@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 // Import layouts
 import SmartLayout from './components/layout/SmartLayout';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import UserLayout from './components/layout/UserLayout';
 
 // Import components
 import Home from './components/public_users/Home';
@@ -21,12 +22,14 @@ import About from './components/public_users/About';
 import Help from './components/public_users/Help';
 import Term from './components/public_users/Term';
 import PrivacyPolicy from './components/public_users/PrivacyPolicy';
+import Profile from './components/user_pages/Profile';
 
 // Import admin pages
 import UsersPage from './components/admin/UsersPage';
 import DronesPage from './components/admin/DronesPage';
 import BookingsPage from './components/admin/BookingsPage';
 import PaymentsPage from './components/admin/PaymentsPage';
+import RatingsPage from './components/admin/RatingsPage';
 
 // Import context
 import { AuthProvider } from './context/AuthContext';
@@ -71,6 +74,12 @@ function App() {
                     <MyBookings />
                   </ProtectedRoute>
                 } />
+                {/* User Profile Route */}
+                <Route path="/profile" element={
+                  <ProtectedRoute allowedRoles={['USER', 'ADMIN']}>
+                    <Profile />
+                  </ProtectedRoute>
+                } />
                 
                 {/* Admin Routes - Protected for admin users only */}
                 <Route path="/admin" element={
@@ -96,6 +105,11 @@ function App() {
                 <Route path="/admin/payments" element={
                   <ProtectedRoute allowedRoles={['ADMIN']}>
                     <PaymentsPage />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/ratings" element={
+                  <ProtectedRoute allowedRoles={['ADMIN']}>
+                    <RatingsPage />
                   </ProtectedRoute>
                 } />
               </Routes>

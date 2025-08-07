@@ -25,8 +25,16 @@ const Login = () => {
   const handleSubmit = async (values, { setSubmitting, setFieldError }) => {
     setIsLoading(true);
     try {
-      const success = await login(values.email, values.password);
-      if (success) navigate(from, { replace: true });
+      const result = await login(values.email, values.password);
+      if (result.success) {
+        // If user is admin, redirect to admin dashboard
+        if (result.role === 'ADMIN') {
+          navigate('/admin', { replace: true });
+        } else {
+          // For regular users, navigate to the profile page
+          navigate('/profile', { replace: true });
+        }
+      }
     } catch (error) {
       if (error.response?.data?.errors) {
         error.response.data.errors.forEach(err => {
