@@ -1,5 +1,6 @@
 package com.skyfleet.rentals.config;
 
+import com.skyfleet.rentals.service.CustomOAuth2UserService;
 import com.skyfleet.rentals.util.JwtUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,12 +36,20 @@ public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2SuccessHandler oauth2SuccessHandler;
 
-    public SecurityConfig(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
-        this.userDetailsService = userDetailsService;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtUtil = jwtUtil;
-    }
+    public SecurityConfig(UserDetailsService userDetailsService, 
+            PasswordEncoder passwordEncoder, 
+            JwtUtil jwtUtil,
+            CustomOAuth2UserService customOAuth2UserService,
+            OAuth2SuccessHandler oauth2SuccessHandler) {
+this.userDetailsService = userDetailsService;
+this.passwordEncoder = passwordEncoder;
+this.jwtUtil = jwtUtil;
+this.customOAuth2UserService = customOAuth2UserService;
+this.oauth2SuccessHandler = oauth2SuccessHandler;
+}
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
@@ -70,6 +79,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/users/auth/login", "/api/users/auth/register").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .requestMatchers("/error").permitAll()
+                .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
 
                 // Admin endpoints
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
@@ -87,10 +97,18 @@ public class SecurityConfig {
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-            .authenticationProvider(authenticationProvider())
-            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+            .oauth2Login(oauth2 -> oauth2
+                    .userInfoEndpoint(userInfo -> userInfo
+                        .userService(customOAuth2UserService)
+                    )
+                    .successHandler(oauth2SuccessHandler)
+                )
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
-        return http.build();
+            return http.build();
+
+
     }
 
     // ✅ CORS configuration for React frontend
