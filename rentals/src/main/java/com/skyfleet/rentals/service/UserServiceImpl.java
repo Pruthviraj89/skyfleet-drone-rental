@@ -3,6 +3,7 @@ package com.skyfleet.rentals.service;
 import com.skyfleet.rentals.custom_exceptions.ApiException;
 
 import com.skyfleet.rentals.dto.AddUserDTO;
+import com.skyfleet.rentals.dto.ProfileUpdateDTO;
 import com.skyfleet.rentals.dto.UserLoginDTO;
 import com.skyfleet.rentals.dto.UserResponseDTO;
 import com.skyfleet.rentals.entity.Role;
@@ -125,6 +126,34 @@ public class UserServiceImpl implements UserService {
 				else
 					throw new ApiException("Token Auth failed");
 	}
+    
+    @Override
+    public UserResponseDTO updateUserProfile(String email, ProfileUpdateDTO profileData) {
+        // Find existing user
+        User existingUser = userRepository.findByEmail(email);
+        if (existingUser == null) {
+            throw new ApiException("User not found");
+        }
+        
+        // Check if the new email is already taken by another user
+        if (!existingUser.getEmail().equals(profileData.getEmail())) {
+            User userWithNewEmail = userRepository.findByEmail(profileData.getEmail());
+            if (userWithNewEmail != null && !userWithNewEmail.getId().equals(existingUser.getId())) {
+                throw new ApiException("Email is already taken by another user");
+            }
+        }
+        
+        // Update allowed fields only (no password, no role)
+        existingUser.setName(profileData.getName());
+        existingUser.setEmail(profileData.getEmail());
+        existingUser.setPhone(profileData.getPhone());
+        existingUser.setAddress(profileData.getAddress());
+        
+        // Save updated user
+        User updatedUser = userRepository.save(existingUser);
+        
+        return modelMapper.map(updatedUser, UserResponseDTO.class);
+    }
 
 	@Override
 	public UserResponseDTO updateUser(User user) {

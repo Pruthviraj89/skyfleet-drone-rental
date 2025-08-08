@@ -4,9 +4,11 @@ package com.skyfleet.rentals.controller;
 
 
 
+import com.skyfleet.rentals.custom_exceptions.ApiException;
 import com.skyfleet.rentals.dto.AddUserDTO;
 import com.skyfleet.rentals.dto.ApiResponse;
 import com.skyfleet.rentals.dto.AuthResponseDTO;
+import com.skyfleet.rentals.dto.ProfileUpdateDTO;
 import com.skyfleet.rentals.dto.UserLoginDTO;
 import com.skyfleet.rentals.dto.UserResponseDTO;
 import com.skyfleet.rentals.entity.Role;
@@ -99,31 +101,53 @@ public class UserController {
     @GetMapping("/profile")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<?> getCurrentUserProfile(Authentication authentication) {
-
-
-    	 if (authentication == null || !authentication.isAuthenticated()) {
-             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
-         }
-    	 
-    	 
-    	// Extract principal (usually username/email)
-         String email = authentication.getName(); // Since you used email as principal
-         
-        UserResponseDTO entity= userService.getUserByEmailAfterTokenVerification(email);
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ApiResponse("Invalid or expired token"));
+        }
         
-        
-    	 
-    	 
-    	
-        return ResponseEntity.ok().body(
-                Map.of(
-                    "message", "Token is valid",
-                    "email", entity.getEmail(),
-                    "role",entity.getRole(),
-                    "name",entity.getName(),
-                    "id",entity.getId()
-                    
-                )
-            );
+        try {
+            String email = authentication.getName();
+            UserResponseDTO userProfile = userService.getUserByEmailAfterTokenVerification(email);
+            
+            return ResponseEntity.ok(userProfile);
+        } catch (ApiException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiResponse(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ApiResponse("Failed to fetch user profile"));
+        }
     }
+    
+ // Add this method to your existing UserController class
+    @PutMapping("/profile")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<?> updateUserProfile(
+            @RequestBody @Valid ProfileUpdateDTO profileData, 
+            Authentication authentication) {
+        
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ApiResponse("Invalid or expired token"));
+        }
+        
+        try {
+            String email = authentication.getName();
+            UserResponseDTO updatedUser = userService.updateUserProfile(email, profileData);
+            
+            return ResponseEntity.ok(Map.of(
+                "message", "Profile updated successfully",
+                "user", updatedUser
+            ));
+        } catch (ApiException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponse(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ApiResponse("Failed to update profile"));
+        }
+    }
+
+
 }

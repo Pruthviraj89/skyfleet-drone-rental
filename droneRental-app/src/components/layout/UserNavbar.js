@@ -70,12 +70,12 @@ const UserNavbar = () => {
             </li>
 
             {/* Favorites */}
-            <li className="nav-item">
+            {/* <li className="nav-item">
               <Link className={`nav-link ${isActive('/favorites')}`} to="/favorites">
                 
                 Favorites
               </Link>
-            </li>
+            </li> */}
 
             {/* Booking History */}
             <li className="nav-item">

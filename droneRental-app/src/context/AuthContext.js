@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import api from '../services/api';
-
 import {jwtDecode} from 'jwt-decode';
 
 // Initial state
@@ -21,11 +20,13 @@ const AUTH_ACTIONS = {
   REGISTER_FAIL: 'REGISTER_FAIL',
   USER_LOADED: 'USER_LOADED',
   AUTH_ERROR: 'AUTH_ERROR',
-  CLEAR_ERROR: 'CLEAR_ERROR'
+  CLEAR_ERROR: 'CLEAR_ERROR',
+  // ✅ Add this new action
+  UPDATE_USER: 'UPDATE_USER'
 };
 
 // Reducer function
-const authReducer =  (state, action) => {
+const authReducer = (state, action) => {
   switch (action.type) {
     case AUTH_ACTIONS.LOGIN_SUCCESS:
     case AUTH_ACTIONS.REGISTER_SUCCESS:
@@ -53,6 +54,13 @@ const authReducer =  (state, action) => {
         isAuthenticated: true,
         loading: false,
         user: action.payload
+      };
+    
+    // ✅ Add this new case
+    case AUTH_ACTIONS.UPDATE_USER:
+      return {
+        ...state,
+        user: { ...state.user, ...action.payload }
       };
     
     case AUTH_ACTIONS.LOGIN_FAIL:
@@ -91,7 +99,7 @@ export const AuthProvider = ({ children }) => {
     loadUser();
   }, []);
 
-  // Load user function
+  // ✅ Updated loadUser function to extract ALL fields
   const loadUser = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -102,23 +110,23 @@ export const AuthProvider = ({ children }) => {
 
       // Set auth token header
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-     
       
       const response = await api.get('/api/users/profile');
-      console.log(response); 
+      console.log('Profile response:', response.data);
 
-      const user={
-
+      // ✅ Extract ALL user fields including phone and address
+      const user = {
+        id: response.data.id,
         role: response.data.role,
         name: response.data.name,
         email: response.data.email,
-        id: response.data.id
+        phone: response.data.phone,    // ✅ Added missing field
+        address: response.data.address // ✅ Added missing field
       };
       
       dispatch({
         type: AUTH_ACTIONS.USER_LOADED,
         payload: user
-       
       });
     } catch (error) {
       console.error('Error loading user:', error);
@@ -137,7 +145,7 @@ export const AuthProvider = ({ children }) => {
       // Set auth token header for future requests
       api.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
 
-      // Fetch user profile to get the real name
+      // ✅ Fetch complete user profile including phone and address
       const profileResponse = await api.get('/api/users/profile');
       const userProfile = profileResponse.data;
 
@@ -146,10 +154,12 @@ export const AuthProvider = ({ children }) => {
         payload: {
           token: response.data.token,
           user: {
+            id: userProfile.id,
             role: userProfile.role,
             name: userProfile.name,
             email: userProfile.email,
-            id: userProfile.id
+            phone: userProfile.phone,    // ✅ Added missing field
+            address: userProfile.address // ✅ Added missing field
           }
         }
       });
@@ -168,7 +178,6 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     try {
       const response = await api.post('/api/users/auth/register', userData);
-
       toast.success('Registration successful! Please login.');
       return true;
     } catch (error) {
@@ -191,6 +200,15 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: AUTH_ACTIONS.CLEAR_ERROR });
   };
 
+  // ✅ Add the missing updateUser function
+  const updateUser = (updatedUserData) => {
+    dispatch({
+      type: AUTH_ACTIONS.UPDATE_USER,
+      payload: updatedUserData
+    });
+  };
+
+  // ✅ Add updateUser to the context value
   const value = {
     user: state.user,
     isAuthenticated: state.isAuthenticated,
@@ -200,7 +218,8 @@ export const AuthProvider = ({ children }) => {
     register,
     logout,
     clearError,
-    loadUser
+    loadUser,
+    updateUser // ✅ Added missing function
   };
 
   return (
@@ -216,4 +235,4 @@ export const useAuth = () => {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-}; 
+};

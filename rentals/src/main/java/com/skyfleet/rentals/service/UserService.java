@@ -1,6 +1,7 @@
 package com.skyfleet.rentals.service;
 
 import com.skyfleet.rentals.dto.AddUserDTO;
+import com.skyfleet.rentals.dto.ProfileUpdateDTO;
 import com.skyfleet.rentals.dto.UserLoginDTO;
 import com.skyfleet.rentals.dto.UserResponseDTO;
 import com.skyfleet.rentals.entity.User;
@@ -18,5 +19,6 @@ public interface UserService extends UserDetailsService {
     
     UserResponseDTO getUserByEmailAfterTokenVerification(String email);
     UserResponseDTO updateUser(User user);
+    UserResponseDTO updateUserProfile(String email, ProfileUpdateDTO profileData);
     
 }
